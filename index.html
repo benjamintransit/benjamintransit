@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Benjam In Transit — Van Build Panels</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://payhip.com/payhip.js" type="text/javascript"></script>
+  <style>
+    :root {
+      --bg:        #0d0d0d;
+      --surface:   #141414;
+      --surface2:  #1c1c1c;
+      --border:    #2a2a2a;
+      --accent:    #e8890c;
+      --accent2:   #c96b00;
+      --text:      #e2ddd6;
+      --muted:     #7a7168;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,13,13,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px; letter-spacing: 3px;
+      color: var(--text); text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 92vh;
+      display: flex; align-items: center;
+      overflow: hidden; padding: 80px 40px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 70% 50%, rgba(232,137,12,0.07) 0%, transparent 70%),
+        repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(255,255,255,0.015) 79px, rgba(255,255,255,0.015) 80px),
+        repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(255,255,255,0.015) 79px, rgba(255,255,255,0.015) 80px);
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--accent); border: 1px solid var(--accent);
+      padding: 5px 14px; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+    }
+    .hero-content { position: relative; max-width: 680px; }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(64px, 10vw, 120px);
+      line-height: 0.92; letter-spacing: 4px; color: var(--text);
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero h1 .accent { color: var(--accent); }
+    .hero-sub {
+      margin-top: 28px; font-size: 16px; color: var(--muted);
+      max-width: 460px;
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 16px; margin-top: 40px;
+      opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+    }
+    .btn-primary {
+      background: var(--accent); color: #000;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px 32px; border: none; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: background 0.2s, transform 0.1s; font-weight: 700;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px 32px; border: 1px solid var(--border); cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-stats {
+      position: absolute; right: 40px; bottom: 60px;
+      display: flex; gap: 48px;
+      opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+    }
+    .stat-item { text-align: right; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--accent); line-height: 1; }
+    .stat-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+
+    /* SHARED */
+    section { padding: 80px 40px; }
+    .section-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(36px, 5vw, 56px); letter-spacing: 3px; color: var(--text); line-height: 1; margin-bottom: 48px; }
+
+    /* TICKER */
+    .ticker { background: var(--accent); overflow: hidden; padding: 10px 0; white-space: nowrap; }
+    .ticker-inner { display: inline-block; animation: ticker 24s linear infinite; }
+    .ticker span { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 4px; color: #000; margin: 0 40px; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* FILTER */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
+    .filter-btn {
+      font-family: 'Share Tech Mono', monospace; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 8px 20px; background: transparent;
+      border: 1px solid var(--border); color: var(--muted);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(232,137,12,0.06); }
+
+    /* PRODUCT GRID */
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2px; }
+    .product-card {
+      background: var(--surface); border: 1px solid var(--border);
+      overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .product-thumb {
+      height: 180px; background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 56px; position: relative; overflow: hidden;
+    }
+    .product-thumb::after {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,0.012) 8px, rgba(255,255,255,0.012) 9px);
+    }
+    .thumb-stl      { background: linear-gradient(135deg, #0f1825, #1a2535); }
+    .thumb-custom   { background: linear-gradient(135deg, #1a1205, #2a1e0a); }
+    .thumb-physical { background: linear-gradient(135deg, #0f1a0f, #1a2a1a); }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      font-family: 'Share Tech Mono', monospace; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; z-index: 1;
+    }
+    .badge-stl      { background: rgba(30,60,100,0.9);  color: #5ba3e8; border: 1px solid #2a4a70; }
+    .badge-custom   { background: rgba(100,60,10,0.9);  color: var(--accent); border: 1px solid #5a3a10; }
+    .badge-physical { background: rgba(20,60,20,0.9);   color: #5aba5a; border: 1px solid #2a5a2a; }
+    .product-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+    .product-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--text); margin-bottom: 6px; }
+    .product-desc { font-size: 13px; color: var(--muted); line-height: 1.5; flex: 1; margin-bottom: 20px; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); letter-spacing: 1px; }
+    .product-price .currency { font-size: 16px; color: var(--muted); vertical-align: super; font-family: 'Barlow', sans-serif; font-weight: 300; }
+
+    /* PAYHIP BUTTON — override their default styling */
+    a.payhip-buy-btn,
+    a.payhip-buy-btn:visited {
+      display: inline-block !important;
+      font-family: 'Share Tech Mono', monospace !important;
+      font-size: 11px !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
+      padding: 10px 20px !important;
+      background: var(--accent) !important;
+      color: #000 !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      border: none !important;
+      border-radius: 0 !important;
+      cursor: pointer !important;
+      transition: background 0.2s !important;
+    }
+    a.payhip-buy-btn:hover { background: var(--accent2) !important; }
+
+    /* HOW IT WORKS */
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px; }
+    .how-card { background: var(--surface); border: 1px solid var(--border); padding: 32px 24px; }
+    .how-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: var(--border); line-height: 1; margin-bottom: 16px; }
+    .how-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); margin-bottom: 10px; }
+    .how-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* CUSTOM SECTION */
+    .custom-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent); padding: 56px 48px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .custom-section h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 4vw, 52px); letter-spacing: 3px; line-height: 1; margin-bottom: 16px; }
+    .custom-section p { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.7; }
+    .config-preview { background: var(--surface2); border: 1px solid var(--border); padding: 24px; font-family: 'Share Tech Mono', monospace; font-size: 12px; line-height: 1.8; }
+    .config-preview .comment  { color: var(--muted); }
+    .config-preview .key      { color: #5ba3e8; }
+    .config-preview .val-str  { color: #5aba5a; }
+    .config-preview .val-type { color: var(--accent); }
+
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 48px 40px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; }
+    .footer-brand { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; margin-bottom: 12px; }
+    .footer-brand span { color: var(--accent); }
+    .footer-tagline { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 260px; }
+    .footer-col h4 { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom { background: var(--bg); border-top: 1px solid var(--border); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .footer-bottom p { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+    .ph-note { display: flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--muted); }
+    .ph-dot { width: 6px; height: 6px; background: #5aba5a; border-radius: 50%; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 20px; min-height: auto; padding-bottom: 120px; }
+      .hero-stats { position: static; margin-top: 48px; justify-content: flex-start; }
+      section { padding: 60px 20px; }
+      .custom-section { grid-template-columns: 1fr; padding: 32px 24px; gap: 32px; }
+      footer { grid-template-columns: 1fr; padding: 40px 20px; }
+      .footer-bottom { flex-direction: column; gap: 8px; padding: 16px 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">BENJAM <span>IN TRANSIT</span></a>
+  <ul class="nav-links">
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#custom">Custom Orders</a></li>
+    <li><a href="configurator.html" style="color:var(--accent)">⚙ Configurator</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">// Van Build Hardware — Made to Order</div>
+    <h1>BUILT FOR<br>THE <span class="accent">ROAD.</span></h1>
+    <p class="hero-sub">Custom 3D printed button &amp; switch panels for van conversions. Parametric designs — configure your layout, print and install.</p>
+    <div class="hero-actions">
+      <a href="#shop" class="btn-primary">Shop Panels</a>
+      <a href="#custom" class="btn-ghost">Custom Order</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">48H</div><div class="stat-label">Custom Turnaround</div></div>
+    <div class="stat-item"><div class="stat-num">STL</div><div class="stat-label">Instant Download</div></div>
+    <div class="stat-item"><div class="stat-num">UK</div><div class="stat-label">Based &amp; Shipped</div></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>INSTANT DOWNLOAD</span><span>PARAMETRIC DESIGN</span><span>CUSTOM TEXT LABELS</span>
+    <span>BUTTON PANELS</span><span>SWITCH PANELS</span><span>VAN CONVERSION</span>
+    <span>OPENCAD COMPATIBLE</span><span>FREE PRINT GUIDE INCLUDED</span>
+    <span>INSTANT DOWNLOAD</span><span>PARAMETRIC DESIGN</span><span>CUSTOM TEXT LABELS</span>
+    <span>BUTTON PANELS</span><span>SWITCH PANELS</span><span>VAN CONVERSION</span>
+    <span>OPENCAD COMPATIBLE</span><span>FREE PRINT GUIDE INCLUDED</span>
+  </div>
+</div>
+
+<!-- SHOP -->
+<section id="shop">
+  <div class="section-label">// Products</div>
+  <div class="section-title">THE RANGE</div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">All Products</button>
+    <button class="filter-btn" onclick="filterProducts('stl', this)">STL Files</button>
+    <button class="filter-btn" onclick="filterProducts('custom', this)">Custom Orders</button>
+    <button class="filter-btn" onclick="filterProducts('physical', this)">Physical Accessories</button>
+  </div>
+
+  <div class="product-grid">
+
+    <!--
+    HOW TO SET UP PAYHIP:
+    1. Sign up free at payhip.com
+    2. Add each product, upload your STL file for digital products
+    3. On each product page click Share — copy the URL (e.g. https://payhip.com/b/XXXXX)
+    4. Replace each href="https://payhip.com/b/REPLACE_ME" below with that URL
+    5. Payhip handles the cart, checkout, file delivery and VAT automatically
+    -->
+
+    <!-- STL: 2-Button Panel -->
+    <div class="product-card" data-category="stl">
+      <div class="product-thumb thumb-stl">
+        <span class="product-badge badge-stl">STL File</span>🔲
+      </div>
+      <div class="product-body">
+        <div class="product-name">2-Button Panel</div>
+        <div class="product-desc">Dual momentary button panel with customisable text labels. Parametric OpenSCAD file — change label text and export your own STL.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>8</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STL: 4-Button Panel -->
+    <div class="product-card" data-category="stl">
+      <div class="product-thumb thumb-stl">
+        <span class="product-badge badge-stl">STL File</span>⬛
+      </div>
+      <div class="product-body">
+        <div class="product-name">4-Button Panel</div>
+        <div class="product-desc">Four-slot button panel. Perfect for lighting zones, fans, USB, and auxiliary power. Includes snap-fit label inserts.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>10</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STL: Switch + Button Mix -->
+    <div class="product-card" data-category="stl">
+      <div class="product-thumb thumb-stl">
+        <span class="product-badge badge-stl">STL File</span>⚡
+      </div>
+      <div class="product-body">
+        <div class="product-name">Switch + Button Mix</div>
+        <div class="product-desc">Combines toggle switch slots with momentary button slots in one panel. Mix and match to your wiring setup.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>10</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- STL: Master Template -->
+    <div class="product-card" data-category="stl">
+      <div class="product-thumb thumb-stl">
+        <span class="product-badge badge-stl">STL + Source</span>📐
+      </div>
+      <div class="product-body">
+        <div class="product-name">Parametric Master Template</div>
+        <div class="product-desc">The full OpenSCAD source file. Define your own slots, types (button/switch/rocker), and text labels. Generate unlimited variations.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>15</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM: Custom Panel -->
+    <div class="product-card" data-category="custom">
+      <div class="product-thumb thumb-custom">
+        <span class="product-badge badge-custom">Custom</span>🛠️
+      </div>
+      <div class="product-body">
+        <div class="product-name">Custom Panel — I'll Build It</div>
+        <div class="product-desc">You tell me your layout and labels. I edit and deliver your STL within 48 hours. Leave your spec in the order notes at checkout.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>20</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM: Full Van Bundle -->
+    <div class="product-card" data-category="custom">
+      <div class="product-thumb thumb-custom">
+        <span class="product-badge badge-custom">Custom Bundle</span>🚐
+      </div>
+      <div class="product-body">
+        <div class="product-name">Full Van Bundle</div>
+        <div class="product-desc">Custom set of up to 6 panels for your complete build. One layout consultation included. All files delivered together.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>65</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHYSICAL: Mounting Hardware -->
+    <div class="product-card" data-category="physical">
+      <div class="product-thumb thumb-physical">
+        <span class="product-badge badge-physical">Physical</span>🔩
+      </div>
+      <div class="product-body">
+        <div class="product-name">Mounting Hardware Kit</div>
+        <div class="product-desc">M3 screws, heat-set inserts, and rubber grommets. Everything you need to install your panel cleanly. Shipped from the UK.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>6</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHYSICAL: Pre-Printed Panel -->
+    <div class="product-card" data-category="physical">
+      <div class="product-thumb thumb-physical">
+        <span class="product-badge badge-physical">Physical</span>🎨
+      </div>
+      <div class="product-body">
+        <div class="product-name">Pre-Printed Panel (Matte Black)</div>
+        <div class="product-desc">Don't have a printer? Get a ready-to-install panel in matte black PETG, shipped to your door. Specify your layout at checkout.</div>
+        <div class="product-footer">
+          <div class="product-price"><span class="currency">£</span>28</div>
+          <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none">Add to Cart</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label">// Process</div>
+  <div class="section-title">HOW IT WORKS</div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <div class="how-title">Choose Your Layout</div>
+      <div class="how-desc">Pick a standard panel or configure a custom mix of buttons, switches, and rockers to match your wiring plan.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <div class="how-title">Add Your Labels</div>
+      <div class="how-desc">Edit the OpenSCAD file yourself in minutes, or leave your label list in the order notes and I'll build it for you.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <div class="how-title">Download &amp; Print</div>
+      <div class="how-desc">STL lands in your inbox instantly (or within 48h for custom orders). Includes a full print settings guide.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-num">04</div>
+      <div class="how-title">Install &amp; Drive</div>
+      <div class="how-desc">Snap in your hardware, wire it up, and hit the road. Designed for real van builds — not just pretty renders.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CUSTOM ORDER -->
+<section id="custom" style="padding:80px 40px;">
+  <div class="custom-section">
+    <div>
+      <div class="section-label">// Custom Orders</div>
+      <h2>YOUR BUILD,<br>YOUR <span style="color:var(--accent)">LABELS.</span></h2>
+      <p>Every van is wired differently. Send me your button list — Lights, Fan, Water Pump, 240V Inverter, whatever you've got — and I'll deliver your custom STL within 48 hours.</p>
+      <a href="https://payhip.com/b/REPLACE_ME" class="payhip-buy-btn" data-theme="none" style="font-size:12px!important;padding:14px 32px!important;">Order a Custom Panel — £20</a>
+    </div>
+    <div>
+      <div class="config-preview">
+        <span class="comment">// Your config — just send me this</span><br><br>
+        <span class="key">panel_slots</span> = [<br>
+        &nbsp;&nbsp;[<span class="val-type">"button"</span>, <span class="val-str">"Lights"</span>],<br>
+        &nbsp;&nbsp;[<span class="val-type">"button"</span>, <span class="val-str">"Roof Fan"</span>],<br>
+        &nbsp;&nbsp;[<span class="val-type">"switch"</span>, <span class="val-str">"Water Pump"</span>],<br>
+        &nbsp;&nbsp;[<span class="val-type">"button"</span>, <span class="val-str">"240V Inv."</span>],<br>
+        &nbsp;&nbsp;[<span class="val-type">"switch"</span>, <span class="val-str">"USB Charge"</span>]<br>
+        ];<br><br>
+        <span class="comment">// → STL delivered within 48h</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIGURATOR CTA -->
+<section style="padding: 80px 40px;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);padding:48px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;">
+    <div>
+      <div class="section-label">// Free Tool</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,48px);letter-spacing:3px;line-height:1;margin-bottom:12px;">BUILD YOUR PANEL<br><span style="color:var(--accent)">IN THE BROWSER</span></h2>
+      <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.7;">Use our free configurator to choose your slot types, type your labels, and see a live 3D preview — then download the STL instantly. No account needed.</p>
+    </div>
+    <a href="configurator.html" class="btn-primary" style="white-space:nowrap;font-size:13px;padding:16px 40px;">⚙ Open Configurator</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">BENJAM <span>IN TRANSIT</span></div>
+    <p class="footer-tagline">Custom 3D printed panels for van builders who care about the details. UK-based, built for real builds.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul>
+      <li><a href="#shop">STL Files</a></li>
+      <li><a href="#shop">Custom Orders</a></li>
+      <li><a href="#shop">Physical Parts</a></li>
+      <li><a href="#shop">Bundles</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#">Print Guide</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul>
+  </div>
+</footer>
+
+<div class="footer-bottom">
+  <p>© 2026 Benjam In Transit — All rights reserved</p>
+  <div class="ph-note">
+    <div class="ph-dot"></div>
+    Secure checkout &amp; file delivery by Payhip
+  </div>
+</div>
+
+<script>
+  function filterProducts(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.style.display = (category === 'all' || card.dataset.category === category) ? 'flex' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>

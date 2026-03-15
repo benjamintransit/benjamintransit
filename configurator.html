@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Configurator — Benjam In Transit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0d0d0d;
+      --surface:  #141414;
+      --surface2: #1c1c1c;
+      --border:   #2a2a2a;
+      --accent:   #e8890c;
+      --accent2:  #c96b00;
+      --text:     #e2ddd6;
+      --muted:    #7a7168;
+      --green:    #5aba5a;
+      --blue:     #5ba3e8;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* NAV */
+    nav {
+      height: 52px;
+      background: rgba(13,13,13,0.95);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+    .nav-tag { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+
+    /* MAIN LAYOUT */
+    .app { display: flex; flex: 1; overflow: hidden; }
+
+    /* LEFT PANEL — CONTROLS */
+    .controls {
+      width: 320px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .controls-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .controls-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--text); }
+    .controls-header p { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--muted); margin-top: 2px; }
+
+    .controls-scroll { flex: 1; overflow-y: auto; padding: 16px 20px; }
+    .controls-scroll::-webkit-scrollbar { width: 4px; }
+    .controls-scroll::-webkit-scrollbar-track { background: var(--surface); }
+    .controls-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* FORM GROUPS */
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px; display: block;
+    }
+    .form-row { display: flex; gap: 8px; }
+
+    input[type="number"], input[type="text"], select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+    input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--accent); }
+    select option { background: var(--surface2); }
+
+    input[type="range"] {
+      width: 100%;
+      -webkit-appearance: none;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .range-row { display: flex; align-items: center; gap: 12px; }
+    .range-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; color: var(--accent);
+      min-width: 36px; text-align: right;
+    }
+
+    /* SLOT CARDS */
+    .slots-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .slot-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 12px;
+      transition: border-color 0.2s;
+    }
+    .slot-card:hover { border-color: var(--accent); }
+
+    .slot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .slot-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px; letter-spacing: 1px;
+      color: var(--accent);
+    }
+    .slot-remove {
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      font-size: 16px; line-height: 1;
+      transition: color 0.2s; padding: 0;
+    }
+    .slot-remove:hover { color: #e05050; }
+
+    .slot-fields { display: flex; flex-direction: column; gap: 8px; }
+    .slot-fields input, .slot-fields select { font-size: 11px; padding: 7px 10px; }
+
+    .type-indicator {
+      display: inline-block;
+      width: 8px; height: 8px; border-radius: 50%;
+      margin-right: 6px; flex-shrink: 0;
+    }
+    .type-button   { background: var(--blue); }
+    .type-switch   { background: var(--green); }
+    .type-rocker   { background: var(--accent); }
+    .type-blank    { background: var(--muted); }
+
+    /* BUTTONS */
+    .btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 10px 16px; border: none; cursor: pointer;
+      transition: all 0.2s; display: inline-flex;
+      align-items: center; gap: 8px; border-radius: 0;
+    }
+    .btn-add {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+    .controls-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .btn-download {
+      background: var(--accent); color: #000; font-weight: 700;
+      width: 100%; justify-content: center; font-size: 12px;
+      padding: 13px;
+    }
+    .btn-download:hover { background: var(--accent2); }
+    .btn-download:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+    .btn-reset {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); width: 100%; justify-content: center;
+    }
+    .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+    /* DIMENSIONS SUMMARY */
+    .dims-bar {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .dim-item { text-align: center; }
+    .dim-val { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--accent); }
+    .dim-lbl { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* RIGHT — 3D VIEWPORT */
+    .viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #080808;
+    }
+    #canvas3d { display: block; width: 100%; height: 100%; }
+
+    .viewport-overlay {
+      position: absolute;
+      bottom: 16px; left: 16px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .view-btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1px;
+      padding: 6px 12px;
+      background: rgba(20,20,20,0.85);
+      border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .view-btn:hover, .view-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    .viewport-hint {
+      position: absolute;
+      top: 12px; right: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1px;
+      color: var(--muted);
+      background: rgba(13,13,13,0.7);
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+    }
+
+    .status-bar {
+      position: absolute;
+      bottom: 16px; right: 16px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1px;
+      color: var(--muted);
+      background: rgba(13,13,13,0.8);
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+    }
+    .status-bar span { color: var(--green); }
+
+    /* SECTION DIVIDER */
+    .section-divider {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }
+
+    /* TOGGLE ROW */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+    }
+    .toggle-label { font-size: 13px; color: var(--text); }
+    .toggle {
+      position: relative;
+      width: 36px; height: 20px;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; top: 3px;
+      background: var(--muted);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: rgba(232,137,12,0.3); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(16px); background: var(--accent); }
+
+    @media (max-width: 700px) {
+      .app { flex-direction: column; }
+      .controls { width: 100%; height: 50vh; border-right: none; border-bottom: 1px solid var(--border); }
+      .viewport { height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">BENJAM <span>IN TRANSIT</span></a>
+  <span class="nav-tag">// Panel Configurator v1.0</span>
+</nav>
+
+<div class="app">
+
+  <!-- ═══ LEFT: CONTROLS ═══ -->
+  <div class="controls">
+    <div class="controls-header">
+      <h2>Configure Panel</h2>
+      <p>// Adjust settings — preview updates live</p>
+    </div>
+
+    <div class="controls-scroll">
+
+      <!-- DIMENSIONS -->
+      <div class="section-divider">Panel Dimensions</div>
+
+      <div class="dims-bar" id="dimsBar">
+        <div class="dim-item"><div class="dim-val" id="dimW">—</div><div class="dim-lbl">Width mm</div></div>
+        <div class="dim-item"><div class="dim-val" id="dimH">50</div><div class="dim-lbl">Height mm</div></div>
+        <div class="dim-item"><div class="dim-val" id="dimD">3</div><div class="dim-lbl">Depth mm</div></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Panel Height (mm)</label>
+        <div class="range-row">
+          <input type="range" id="panelHeight" min="30" max="100" value="50" oninput="updateRange(this,'rangeH');rebuild()">
+          <span class="range-val" id="rangeH">50</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Wall Thickness (mm)</label>
+        <div class="range-row">
+          <input type="range" id="wallThick" min="2" max="8" value="3" step="0.5" oninput="updateRange(this,'rangeW');rebuild()">
+          <span class="range-val" id="rangeW">3</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Slot Spacing (mm)</label>
+        <div class="range-row">
+          <input type="range" id="slotSpacing" min="2" max="12" value="5" oninput="updateRange(this,'rangeS');rebuild()">
+          <span class="range-val" id="rangeS">5</span>
+        </div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="section-divider">Options</div>
+
+      <div class="toggle-row">
+        <span class="toggle-label">Show text labels</span>
+        <label class="toggle"><input type="checkbox" id="showLabels" checked onchange="rebuild()"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Mounting holes</span>
+        <label class="toggle"><input type="checkbox" id="mountHoles" checked onchange="rebuild()"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">Chamfered edges</span>
+        <label class="toggle"><input type="checkbox" id="chamfer" onchange="rebuild()"><span class="toggle-slider"></span></label>
+      </div>
+
+      <!-- SLOTS -->
+      <div class="section-divider" style="margin-top:16px;">Button / Switch Slots</div>
+
+      <div class="slots-list" id="slotsList"></div>
+
+      <button class="btn btn-add" onclick="addSlot()" style="margin-top:8px;">+ Add Slot</button>
+
+    </div><!-- end scroll -->
+
+    <div class="controls-footer">
+      <button class="btn btn-download" id="downloadBtn" onclick="downloadSTL()">
+        ⬇ Download STL
+      </button>
+      <button class="btn btn-reset" onclick="resetConfig()">Reset to Default</button>
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT: VIEWPORT ═══ -->
+  <div class="viewport">
+    <canvas id="canvas3d"></canvas>
+    <div class="viewport-hint">Drag to rotate · Scroll to zoom · Right-drag to pan</div>
+    <div class="viewport-overlay">
+      <button class="view-btn" onclick="setView('front')">Front</button>
+      <button class="view-btn" onclick="setView('top')">Top</button>
+      <button class="view-btn" onclick="setView('iso')">Iso</button>
+    </div>
+    <div class="status-bar" id="statusBar"><span>●</span> Ready</div>
+  </div>
+
+</div>
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let slots = [
+  { type: 'button', label: 'Lights' },
+  { type: 'button', label: 'Roof Fan' },
+  { type: 'switch', label: 'Water Pump' },
+  { type: 'button', label: 'USB' },
+];
+
+let slotIdCounter = 10;
+
+// ═══════════════════════════════════════════════════════════
+// THREE.JS SETUP
+// ═══════════════════════════════════════════════════════════
+const canvas = document.getElementById('canvas3d');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x080808);
+
+// Grid
+const gridHelper = new THREE.GridHelper(200, 20, 0x1a1a1a, 0x1a1a1a);
+scene.add(gridHelper);
+
+// Lights
+const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambient);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+dirLight.position.set(80, 120, 60);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
+const fillLight = new THREE.DirectionalLight(0xe8890c, 0.2);
+fillLight.position.set(-60, 40, -40);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0x5ba3e8, 0.15);
+rimLight.position.set(0, -50, -80);
+scene.add(rimLight);
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+camera.position.set(80, 60, 120);
+camera.lookAt(0, 0, 0);
+
+// Panel group
+let panelGroup = new THREE.Group();
+scene.add(panelGroup);
+
+// ═══════════════════════════════════════════════════════════
+// ORBIT CONTROLS (manual implementation — no import needed)
+// ═══════════════════════════════════════════════════════════
+let isDragging = false, isRightDrag = false;
+let lastMouse = { x: 0, y: 0 };
+let spherical = { theta: 0.6, phi: 0.8, radius: 180 };
+let panOffset = { x: 0, y: 0 };
+
+canvas.addEventListener('mousedown', e => {
+  isDragging = true;
+  isRightDrag = e.button === 2;
+  lastMouse = { x: e.clientX, y: e.clientY };
+});
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+window.addEventListener('mouseup', () => isDragging = false);
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - lastMouse.x;
+  const dy = e.clientY - lastMouse.y;
+  lastMouse = { x: e.clientX, y: e.clientY };
+  if (isRightDrag) {
+    panOffset.x -= dx * 0.2;
+    panOffset.y += dy * 0.2;
+  } else {
+    spherical.theta -= dx * 0.008;
+    spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi - dy * 0.008));
+  }
+  updateCamera();
+});
+canvas.addEventListener('wheel', e => {
+  spherical.radius = Math.max(40, Math.min(500, spherical.radius + e.deltaY * 0.3));
+  updateCamera();
+});
+
+// Touch support
+let lastTouchDist = 0;
+canvas.addEventListener('touchstart', e => {
+  if (e.touches.length === 1) {
+    isDragging = true; isRightDrag = false;
+    lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  } else if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, { passive: true });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && isDragging) {
+    const dx = e.touches[0].clientX - lastMouse.x;
+    const dy = e.touches[0].clientY - lastMouse.y;
+    lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    spherical.theta -= dx * 0.008;
+    spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi - dy * 0.008));
+    updateCamera();
+  } else if (e.touches.length === 2) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    spherical.radius = Math.max(40, Math.min(500, spherical.radius - (dist - lastTouchDist) * 0.5));
+    lastTouchDist = dist;
+    updateCamera();
+  }
+}, { passive: false });
+canvas.addEventListener('touchend', () => isDragging = false);
+
+function updateCamera() {
+  camera.position.set(
+    panOffset.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta),
+    panOffset.y + spherical.radius * Math.cos(spherical.phi),
+    spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta)
+  );
+  camera.lookAt(panOffset.x, panOffset.y, 0);
+}
+
+function setView(v) {
+  panOffset = { x: 0, y: 0 };
+  if (v === 'front')  { spherical.theta = 0;    spherical.phi = Math.PI/2; spherical.radius = 180; }
+  if (v === 'top')    { spherical.theta = 0;    spherical.phi = 0.05;      spherical.radius = 180; }
+  if (v === 'iso')    { spherical.theta = 0.6;  spherical.phi = 0.8;       spherical.radius = 180; }
+  updateCamera();
+}
+
+// ═══════════════════════════════════════════════════════════
+// GEOMETRY HELPERS
+// ═══════════════════════════════════════════════════════════
+const MAT_PANEL = new THREE.MeshPhongMaterial({
+  color: 0x1a1a1a, specular: 0x333333, shininess: 40
+});
+const MAT_HOLE_BUTTON = new THREE.MeshPhongMaterial({
+  color: 0x0a0a0a, specular: 0x111111, shininess: 20
+});
+const MAT_HOLE_SWITCH = new THREE.MeshPhongMaterial({
+  color: 0x080808, specular: 0x111111, shininess: 10
+});
+const MAT_TEXT = new THREE.MeshPhongMaterial({
+  color: 0xe8890c, emissive: 0x3a2000, shininess: 5
+});
+const MAT_MOUNT = new THREE.MeshPhongMaterial({
+  color: 0x333333, shininess: 60
+});
+
+function makeRoundedRect(w, h, r, depth) {
+  const shape = new THREE.Shape();
+  shape.moveTo(-w/2 + r, -h/2);
+  shape.lineTo( w/2 - r, -h/2);
+  shape.quadraticCurveTo( w/2, -h/2,  w/2, -h/2 + r);
+  shape.lineTo( w/2,  h/2 - r);
+  shape.quadraticCurveTo( w/2,  h/2,  w/2 - r,  h/2);
+  shape.lineTo(-w/2 + r,  h/2);
+  shape.quadraticCurveTo(-w/2,  h/2, -w/2,  h/2 - r);
+  shape.lineTo(-w/2, -h/2 + r);
+  shape.quadraticCurveTo(-w/2, -h/2, -w/2 + r, -h/2);
+  return new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false });
+}
+
+function makeTextMesh(str, size, depth) {
+  // Simple pixel-font text using tiny boxes
+  const group = new THREE.Group();
+  if (!str) return group;
+
+  // Character pixel maps (5x7 grid, simplified)
+  const CHARS = {
+    'A':[[0,1,1,0],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
+    'B':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,1],[1,1,1,0]],
+    'C':[[0,1,1,1],[1,0,0,0],[1,0,0,0],[1,0,0,0],[0,1,1,1]],
+    'D':[[1,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]],
+    'E':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
+    'F':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
+    'G':[[0,1,1,1],[1,0,0,0],[1,0,1,1],[1,0,0,1],[0,1,1,1]],
+    'H':[[1,0,0,1],[1,0,0,1],[1,1,1,1],[1,0,0,1],[1,0,0,1]],
+    'I':[[1,1,1],[0,1,0],[0,1,0],[0,1,0],[1,1,1]],
+    'J':[[0,0,1],[0,0,1],[0,0,1],[1,0,1],[0,1,1]],
+    'K':[[1,0,0,1],[1,0,1,0],[1,1,0,0],[1,0,1,0],[1,0,0,1]],
+    'L':[[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]],
+    'M':[[1,0,0,0,1],[1,1,0,1,1],[1,0,1,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+    'N':[[1,0,0,1],[1,1,0,1],[1,0,1,1],[1,0,0,1],[1,0,0,1]],
+    'O':[[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
+    'P':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
+    'Q':[[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,1,0],[0,1,0,1]],
+    'R':[[1,1,1,0],[1,0,0,1],[1,1,1,0],[1,0,1,0],[1,0,0,1]],
+    'S':[[0,1,1,1],[1,0,0,0],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
+    'T':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+    'U':[[1,0,0,1],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
+    'V':[[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,1,0,1,0],[0,0,1,0,0]],
+    'W':[[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
+    'X':[[1,0,0,1],[0,1,1,0],[0,0,0,0],[0,1,1,0],[1,0,0,1]],
+    'Y':[[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+    'Z':[[1,1,1,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[1,1,1,1]],
+    '0':[[0,1,1,0],[1,0,0,1],[1,0,0,1],[1,0,0,1],[0,1,1,0]],
+    '1':[[0,1,0],[1,1,0],[0,1,0],[0,1,0],[1,1,1]],
+    '2':[[0,1,1,0],[1,0,0,1],[0,0,1,0],[0,1,0,0],[1,1,1,1]],
+    '3':[[1,1,1,0],[0,0,0,1],[0,1,1,0],[0,0,0,1],[1,1,1,0]],
+    '4':[[1,0,0,1],[1,0,0,1],[1,1,1,1],[0,0,0,1],[0,0,0,1]],
+    '5':[[1,1,1,1],[1,0,0,0],[1,1,1,0],[0,0,0,1],[1,1,1,0]],
+    '6':[[0,1,1,0],[1,0,0,0],[1,1,1,0],[1,0,0,1],[0,1,1,0]],
+    '7':[[1,1,1,1],[0,0,0,1],[0,0,1,0],[0,1,0,0],[0,1,0,0]],
+    '8':[[0,1,1,0],[1,0,0,1],[0,1,1,0],[1,0,0,1],[0,1,1,0]],
+    '9':[[0,1,1,0],[1,0,0,1],[0,1,1,1],[0,0,0,1],[0,1,1,0]],
+    ' ':[[0,0],[0,0],[0,0],[0,0],[0,0]],
+    '.':[[0],[0],[0],[0],[1]],
+    '/':[[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0],[0,0,0,0]],
+    '-':[[0,0,0],[0,0,0],[1,1,1],[0,0,0],[0,0,0]],
+    '+':[[0,1,0],[0,1,0],[1,1,1],[0,1,0],[0,1,0]],
+    '?':[[0,1,1,0],[1,0,0,1],[0,0,1,0],[0,0,0,0],[0,0,1,0]],
+    '!':[[0,1,0],[0,1,0],[0,1,0],[0,0,0],[0,1,0]],
+    '#':[[1,0,1],[1,1,1],[1,0,1],[1,1,1],[1,0,1]],
+    'V2':[[1,0,1],[1,0,1],[1,0,1],[1,0,1],[0,1,0]],
+  };
+
+  const px = size * 0.18;
+  const gap = px * 0.3;
+  let xOff = 0;
+
+  const totalWidth = str.toUpperCase().split('').reduce((acc, ch) => {
+    const map = CHARS[ch] || CHARS['?'];
+    return acc + (map[0].length * (px + gap));
+  }, 0) - gap;
+
+  xOff = -totalWidth / 2;
+
+  str.toUpperCase().split('').forEach(ch => {
+    const map = CHARS[ch] || CHARS['?'];
+    const cols = map[0].length;
+    for (let row = 0; row < map.length; row++) {
+      for (let col = 0; col < cols; col++) {
+        if (map[row][col]) {
+          const geo = new THREE.BoxGeometry(px, px, depth);
+          const mesh = new THREE.Mesh(geo, MAT_TEXT);
+          mesh.position.set(
+            xOff + col * (px + gap) + px/2,
+            -(row * (px + gap)) + (map.length * (px + gap)) / 2,
+            0
+          );
+          group.add(mesh);
+        }
+      }
+    }
+    xOff += cols * (px + gap);
+  });
+
+  return group;
+}
+
+// ═══════════════════════════════════════════════════════════
+// BUILD PANEL
+// ═══════════════════════════════════════════════════════════
+function getConfig() {
+  return {
+    panelH:    parseFloat(document.getElementById('panelHeight').value),
+    wallT:     parseFloat(document.getElementById('wallThick').value),
+    spacing:   parseFloat(document.getElementById('slotSpacing').value),
+    showLabels: document.getElementById('showLabels').checked,
+    mountHoles: document.getElementById('mountHoles').checked,
+    chamfer:    document.getElementById('chamfer').checked,
+  };
+}
+
+function calcPanelWidth(cfg) {
+  const slotW = cfg.panelH - cfg.wallT * 2;
+  return slots.length * slotW + (slots.length + 1) * cfg.spacing + cfg.wallT * 2;
+}
+
+function rebuild() {
+  const cfg = getConfig();
+  const depth = cfg.wallT;
+  const panelH = cfg.panelH;
+  const slotW = panelH - cfg.wallT * 2;
+  const panelW = calcPanelWidth(cfg);
+
+  // Update dims display
+  document.getElementById('dimW').textContent = panelW.toFixed(0);
+  document.getElementById('dimH').textContent = panelH.toFixed(0);
+  document.getElementById('dimD').textContent = depth.toFixed(0);
+
+  // Clear old panel
+  while (panelGroup.children.length) panelGroup.remove(panelGroup.children[0]);
+
+  const scale = 1; // 1 unit = 1mm
+
+  // ── Main panel body ──
+  const panelGeo = cfg.chamfer
+    ? makeRoundedRect(panelW, panelH, 2, depth)
+    : new THREE.BoxGeometry(panelW, panelH, depth);
+
+  const panelMesh = new THREE.Mesh(panelGeo, MAT_PANEL);
+  panelMesh.castShadow = true;
+  panelMesh.receiveShadow = true;
+  if (!cfg.chamfer) panelMesh.position.set(0, 0, 0);
+  panelGroup.add(panelMesh);
+
+  // ── Slot cutouts + icons + labels ──
+  slots.forEach((slot, i) => {
+    const xPos = -panelW/2 + cfg.wallT + cfg.spacing + slotW/2 + i * (slotW + cfg.spacing);
+
+    // Cutout (dark inset to simulate hole)
+    const cutW = slotW - 4;
+    const cutH = panelH - cfg.wallT * 2 - 8;
+
+    if (slot.type === 'button') {
+      // Round button hole
+      const r = Math.min(cutW, cutH) / 2 * 0.65;
+      const ringOuter = new THREE.CylinderGeometry(r, r, depth + 0.2, 32);
+      const ringMesh = new THREE.Mesh(ringOuter, MAT_HOLE_BUTTON);
+      ringMesh.rotation.x = Math.PI / 2;
+      ringMesh.position.set(xPos, 0, 0);
+      panelGroup.add(ringMesh);
+
+      // Inner circle (button face)
+      const btnR = r * 0.75;
+      const btnGeo = new THREE.CylinderGeometry(btnR, btnR, depth * 0.3, 32);
+      const btnMesh = new THREE.Mesh(btnGeo, new THREE.MeshPhongMaterial({ color: 0x222222, shininess: 80 }));
+      btnMesh.rotation.x = Math.PI / 2;
+      btnMesh.position.set(xPos, 0, depth/2 * 0.3);
+      panelGroup.add(btnMesh);
+
+    } else if (slot.type === 'switch') {
+      // Rectangular switch hole
+      const sw = cutW * 0.45, sh = cutH * 0.6;
+      const switchGeo = new THREE.BoxGeometry(sw, sh, depth + 0.2);
+      const switchMesh = new THREE.Mesh(switchGeo, MAT_HOLE_SWITCH);
+      switchMesh.position.set(xPos, 2, 0);
+      panelGroup.add(switchMesh);
+
+      // Toggle lever
+      const leverGeo = new THREE.BoxGeometry(sw * 0.5, sh * 0.35, depth * 0.8);
+      const leverMesh = new THREE.Mesh(leverGeo, new THREE.MeshPhongMaterial({ color: 0x444444, shininess: 60 }));
+      leverMesh.position.set(xPos, 2 + sh * 0.15, depth * 0.6);
+      panelGroup.add(leverMesh);
+
+    } else if (slot.type === 'rocker') {
+      // Rocker switch — wide rectangle
+      const rw = cutW * 0.75, rh = cutH * 0.7;
+      const rockerGeo = new THREE.BoxGeometry(rw, rh, depth + 0.2);
+      const rockerMesh = new THREE.Mesh(rockerGeo, MAT_HOLE_SWITCH);
+      rockerMesh.position.set(xPos, 0, 0);
+      panelGroup.add(rockerMesh);
+
+      // Rocker face
+      const faceGeo = new THREE.BoxGeometry(rw - 1, rh - 1, depth * 0.5);
+      const faceMesh = new THREE.Mesh(faceGeo, new THREE.MeshPhongMaterial({ color: 0x2a2a2a, shininess: 40 }));
+      faceMesh.position.set(xPos, 0, depth * 0.5);
+      panelGroup.add(faceMesh);
+
+    } else if (slot.type === 'blank') {
+      // Just a recessed rectangle
+      const bGeo = new THREE.BoxGeometry(cutW * 0.8, cutH * 0.8, depth * 0.3);
+      const bMesh = new THREE.Mesh(bGeo, new THREE.MeshPhongMaterial({ color: 0x0d0d0d }));
+      bMesh.position.set(xPos, 0, depth/2 * 0.5);
+      panelGroup.add(bMesh);
+    }
+
+    // ── Text label ──
+    if (cfg.showLabels && slot.label) {
+      const labelSize = Math.min(slotW * 0.7, 12);
+      const textGroup = makeTextMesh(slot.label, labelSize, 0.6);
+      const textY = -panelH/2 + cfg.wallT + 3;
+      textGroup.position.set(xPos, textY, depth/2);
+      panelGroup.add(textGroup);
+    }
+  });
+
+  // ── Mounting holes ──
+  if (cfg.mountHoles && panelW > 20) {
+    const mhR = 1.5;
+    const mhOffX = cfg.wallT / 2 + mhR;
+    const mhOffY = cfg.wallT / 2 + mhR;
+    const corners = [
+      [-panelW/2 + mhOffX,  panelH/2 - mhOffY],
+      [ panelW/2 - mhOffX,  panelH/2 - mhOffY],
+      [-panelW/2 + mhOffX, -panelH/2 + mhOffY],
+      [ panelW/2 - mhOffX, -panelH/2 + mhOffY],
+    ];
+    corners.forEach(([cx, cy]) => {
+      const hGeo = new THREE.CylinderGeometry(mhR, mhR, depth + 0.2, 16);
+      const hMesh = new THREE.Mesh(hGeo, MAT_MOUNT);
+      hMesh.rotation.x = Math.PI / 2;
+      hMesh.position.set(cx, cy, 0);
+      panelGroup.add(hMesh);
+    });
+  }
+
+  // Centre panel
+  panelGroup.position.set(0, 0, 0);
+
+  document.getElementById('statusBar').innerHTML = `<span>●</span> ${slots.length} slots — ${panelW.toFixed(0)}×${panelH.toFixed(0)}×${depth.toFixed(0)}mm`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STL EXPORT
+// ═══════════════════════════════════════════════════════════
+function downloadSTL() {
+  const btn = document.getElementById('downloadBtn');
+  btn.textContent = '⏳ Generating...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    try {
+      const stlData = generateSTL();
+      const blob = new Blob([stlData], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const cfg = getConfig();
+      const panelW = calcPanelWidth(cfg).toFixed(0);
+      a.download = `benjam-panel-${slots.length}slot-${panelW}x${cfg.panelH}mm.stl`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch(e) {
+      console.error(e);
+    }
+    btn.innerHTML = '⬇ Download STL';
+    btn.disabled = false;
+  }, 50);
+}
+
+function generateSTL() {
+  // Collect all meshes and write binary STL
+  const meshes = [];
+  panelGroup.traverse(child => {
+    if (child.isMesh) meshes.push(child);
+  });
+
+  const triangles = [];
+
+  meshes.forEach(mesh => {
+    const geo = mesh.geometry.clone();
+    geo.applyMatrix4(mesh.matrixWorld);
+    panelGroup.updateWorldMatrix(true, true);
+
+    // Re-apply just the mesh's local matrix relative to panelGroup
+    const m = new THREE.Matrix4();
+    mesh.updateWorldMatrix(true, false);
+    // Use local position/rotation to transform geometry
+    const posMat = new THREE.Matrix4();
+    posMat.makeTranslation(mesh.position.x, mesh.position.y, mesh.position.z);
+    const rotMat = new THREE.Matrix4();
+    rotMat.makeRotationFromEuler(mesh.rotation);
+
+    const localGeo = mesh.geometry.clone();
+    localGeo.applyMatrix4(rotMat);
+    localGeo.applyMatrix4(posMat);
+
+    if (localGeo.index) {
+      const pos = localGeo.attributes.position;
+      const idx = localGeo.index.array;
+      for (let i = 0; i < idx.length; i += 3) {
+        const a = new THREE.Vector3().fromBufferAttribute(pos, idx[i]);
+        const b = new THREE.Vector3().fromBufferAttribute(pos, idx[i+1]);
+        const c = new THREE.Vector3().fromBufferAttribute(pos, idx[i+2]);
+        const n = new THREE.Vector3().crossVectors(
+          new THREE.Vector3().subVectors(b, a),
+          new THREE.Vector3().subVectors(c, a)
+        ).normalize();
+        triangles.push({ n, a, b, c });
+      }
+    } else {
+      const pos = localGeo.attributes.position;
+      for (let i = 0; i < pos.count; i += 3) {
+        const a = new THREE.Vector3().fromBufferAttribute(pos, i);
+        const b = new THREE.Vector3().fromBufferAttribute(pos, i+1);
+        const c = new THREE.Vector3().fromBufferAttribute(pos, i+2);
+        const n = new THREE.Vector3().crossVectors(
+          new THREE.Vector3().subVectors(b, a),
+          new THREE.Vector3().subVectors(c, a)
+        ).normalize();
+        triangles.push({ n, a, b, c });
+      }
+    }
+  });
+
+  // Binary STL format
+  const buffer = new ArrayBuffer(80 + 4 + triangles.length * 50);
+  const view = new DataView(buffer);
+
+  // Header (80 bytes)
+  const header = 'Benjam In Transit — Custom Panel — benjamintransit.com';
+  for (let i = 0; i < 80; i++) {
+    view.setUint8(i, i < header.length ? header.charCodeAt(i) : 0);
+  }
+
+  // Triangle count
+  view.setUint32(80, triangles.length, true);
+
+  // Triangles
+  let offset = 84;
+  triangles.forEach(({ n, a, b, c }) => {
+    view.setFloat32(offset,    n.x, true); offset += 4;
+    view.setFloat32(offset,    n.y, true); offset += 4;
+    view.setFloat32(offset,    n.z, true); offset += 4;
+    view.setFloat32(offset,    a.x, true); offset += 4;
+    view.setFloat32(offset,    a.y, true); offset += 4;
+    view.setFloat32(offset,    a.z, true); offset += 4;
+    view.setFloat32(offset,    b.x, true); offset += 4;
+    view.setFloat32(offset,    b.y, true); offset += 4;
+    view.setFloat32(offset,    b.z, true); offset += 4;
+    view.setFloat32(offset,    c.x, true); offset += 4;
+    view.setFloat32(offset,    c.y, true); offset += 4;
+    view.setFloat32(offset,    c.z, true); offset += 4;
+    view.setUint16(offset, 0, true);       offset += 2;
+  });
+
+  return buffer;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLOT UI
+// ═══════════════════════════════════════════════════════════
+const TYPE_COLORS = { button: 'type-button', switch: 'type-switch', rocker: 'type-rocker', blank: 'type-blank' };
+
+function renderSlots() {
+  const list = document.getElementById('slotsList');
+  list.innerHTML = '';
+
+  slots.forEach((slot, i) => {
+    const card = document.createElement('div');
+    card.className = 'slot-card';
+    card.innerHTML = `
+      <div class="slot-header">
+        <span class="slot-num">
+          <span class="type-indicator ${TYPE_COLORS[slot.type] || 'type-blank'}"></span>
+          Slot ${i + 1}
+        </span>
+        ${slots.length > 1 ? `<button class="slot-remove" onclick="removeSlot(${i})" title="Remove">✕</button>` : ''}
+      </div>
+      <div class="slot-fields">
+        <select onchange="updateSlot(${i},'type',this.value)">
+          <option value="button"  ${slot.type==='button' ?'selected':''}>⚪ Momentary Button</option>
+          <option value="switch"  ${slot.type==='switch' ?'selected':''}>🔲 Toggle Switch</option>
+          <option value="rocker"  ${slot.type==='rocker' ?'selected':''}>▬ Rocker Switch</option>
+          <option value="blank"   ${slot.type==='blank'  ?'selected':''}>▫ Blank Slot</option>
+        </select>
+        <input type="text" placeholder="Label text (e.g. Lights)"
+          value="${slot.label}"
+          oninput="updateSlot(${i},'label',this.value)"
+          maxlength="12">
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function updateSlot(i, key, val) {
+  slots[i][key] = val;
+  renderSlots();
+  rebuild();
+}
+
+function addSlot() {
+  if (slots.length >= 8) return;
+  slots.push({ type: 'button', label: '' });
+  renderSlots();
+  rebuild();
+}
+
+function removeSlot(i) {
+  if (slots.length <= 1) return;
+  slots.splice(i, 1);
+  renderSlots();
+  rebuild();
+}
+
+function resetConfig() {
+  slots = [
+    { type: 'button', label: 'Lights' },
+    { type: 'button', label: 'Roof Fan' },
+    { type: 'switch', label: 'Water Pump' },
+    { type: 'button', label: 'USB' },
+  ];
+  document.getElementById('panelHeight').value = 50;
+  document.getElementById('wallThick').value = 3;
+  document.getElementById('slotSpacing').value = 5;
+  document.getElementById('showLabels').checked = true;
+  document.getElementById('mountHoles').checked = true;
+  document.getElementById('chamfer').checked = false;
+  document.getElementById('rangeH').textContent = 50;
+  document.getElementById('rangeW').textContent = 3;
+  document.getElementById('rangeS').textContent = 5;
+  renderSlots();
+  rebuild();
+}
+
+function updateRange(el, labelId) {
+  document.getElementById(labelId).textContent = el.value;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER LOOP
+// ═══════════════════════════════════════════════════════════
+function resizeRenderer() {
+  const vp = document.querySelector('.viewport');
+  const w = vp.clientWidth, h = vp.clientHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', resizeRenderer);
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+resizeRenderer();
+renderSlots();
+rebuild();
+setView('iso');
+animate();
+</script>
+</body>
+</html>
