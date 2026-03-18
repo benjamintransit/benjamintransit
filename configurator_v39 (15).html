@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Panel Studio — Benjam In Transit</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,700;1,400;1,700&family=Barlow+Condensed:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400&family=Rajdhani:wght@400;700&family=Exo+2:ital,wght@0,400;0,700;1,400;1,700&family=Orbitron:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Inter:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;700&family=Jura:wght@400;700&family=Michroma&family=Quantico:ital,wght@0,400;0,700;1,400&family=Black+Ops+One&family=Audiowide&family=Nova+Mono&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#2e2e2e;--surf:#383838;--surf2:#424242;--surf3:#1e1e1e;--surf4:#323232;
+  --bord:#505050;--bord-dk:#3a3a3a;
+  --green:#6db387;--green2:#4e9068;
+  --brown:#5a2e10;--brown2:#7a3e18;
+  --black:#111;--lgrey:#f0f0f0;--mgrey:#888;--dgrey:#2a2a2a;
+  --text:#e8e8e8;--muted:#909090;--muted2:#666;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;overflow:hidden}
+body{height:100%;overflow:hidden;transform:scale(1.5);transform-origin:top left;width:66.667%;height:66.667%}
+body{background:var(--surf3);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;display:flex;flex-direction:column;font-size:13px}
+
+/* NAV */
+nav{height:46px;background:var(--black);border-bottom:1px solid var(--bord-dk);display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0;z-index:50}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;color:var(--lgrey);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-right{display:flex;align-items:center;gap:6px}
+.nbtn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border:1px solid var(--bord);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.nbtn:hover{border-color:var(--green);color:var(--green)}
+.nbtn.pri{background:var(--brown);color:var(--lgrey);border-color:var(--brown)}
+.nbtn.pri:hover{background:var(--brown2)}
+.nbtn.grn{background:var(--green);color:var(--black);border-color:var(--green);font-weight:700}
+.nbtn.grn:hover{background:var(--green2)}
+
+/* LAYOUT */
+.studio{display:flex;flex:1;overflow:hidden;min-height:0}
+
+/* LEFT */
+.sidebar{width:290px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--bord-dk);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-tabs{display:flex;border-bottom:1px solid var(--bord-dk);flex-shrink:0}
+.stab{flex:1;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:9px 4px;text-align:center;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all .2s;border-bottom:2px solid transparent}
+.stab.active{color:var(--green);border-bottom-color:var(--green)}
+.sbar-body{flex:1;overflow-y:auto;padding:12px}
+.sbar-body::-webkit-scrollbar{width:3px}
+.sbar-body::-webkit-scrollbar-thumb{background:var(--bord)}
+
+/* SECTION HEADERS */
+.sh{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--bord-dk)}
+.sh:first-child{margin-top:0}
+.sh .sh-action{float:right;cursor:pointer;color:var(--muted2);font-size:9px;text-transform:none;letter-spacing:0;transition:color .2s}
+.sh .sh-action:hover{color:var(--text)}
+
+/* FORM */
+.field{margin-bottom:8px}
+.field label,.flbl{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+input[type=text],input[type=number],select,textarea{width:100%;background:var(--surf3);border:1px solid var(--bord-dk);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;outline:none;transition:border-color .2s;border-radius:0;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green)}
+select option{background:var(--surf3)}
+input[type=range]{width:100%;accent-color:var(--green);cursor:pointer;margin-top:4px;height:4px}
+input[type=range]::-webkit-slider-thumb{width:16px;height:16px}
+input[type=range]::-moz-range-thumb{width:16px;height:16px}
+input[type=range]:disabled{opacity:0.35;cursor:not-allowed}
+input[type=color]{width:100%;height:28px;border:1px solid var(--bord-dk);background:transparent;cursor:pointer;padding:2px;border-radius:0}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+
+/* LOCKED FIELD */
+.locked-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.locked-val{flex:1;background:var(--surf3);border:1px solid var(--bord-dk);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;cursor:not-allowed}
+.lock-icon{color:var(--muted2);font-size:12px;flex-shrink:0;cursor:pointer;transition:color .2s}
+.lock-icon:hover{color:var(--green)}
+
+/* TOGGLE */
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0}
+.tog-lbl{font-size:12px;color:var(--text)}
+.tog{position:relative;width:32px;height:17px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tslid{position:absolute;inset:0;background:var(--bord);cursor:pointer;transition:background .2s}
+.tslid::before{content:'';position:absolute;width:11px;height:11px;left:3px;top:3px;background:var(--muted2);transition:transform .2s,background .2s}
+.tog input:checked+.tslid{background:rgba(109,179,135,.25)}
+.tog input:checked+.tslid::before{transform:translateX(15px);background:var(--green)}
+
+/* SLOT CARDS */
+.slot-card{background:var(--surf2);border:1px solid var(--bord-dk);margin-bottom:6px;transition:border-color .2s}
+.slot-card.selected{border-color:var(--green)}
+.slot-card-header{display:flex;align-items:center;padding:8px 10px;cursor:pointer;gap:6px}
+.slot-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.slot-card-name{flex:1;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text)}
+.slot-card-type{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.slot-card-body{padding:10px;border-top:1px solid var(--bord-dk)}
+.irow{display:flex;gap:4px;align-items:center}
+.ibtn{background:none;border:1px solid var(--bord-dk);color:var(--muted);padding:3px 7px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:9px;transition:all .2s;text-transform:uppercase}
+.ibtn:hover{border-color:var(--green);color:var(--green)}
+.ibtn.active{border-color:var(--green);background:rgba(109,179,135,.12);color:var(--green)}
+.ibtn.del:hover{border-color:#e05050;color:#e05050}
+
+/* ADD SLOT BUTTONS */
+.add-slot-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+.add-slot-btn{background:var(--surf3);border:1px dashed var(--bord);color:var(--muted);padding:10px 6px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.add-slot-btn:hover{border-color:var(--green);color:var(--green);border-style:solid}
+.add-slot-btn .asi{font-size:20px}
+.add-slot-btn .asl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase}
+
+/* LED POS PICKER */
+.led-pos-row{display:flex;gap:4px;flex-wrap:wrap}
+
+/* CENTRE CANVAS */
+.canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#3a3a3a;min-width:0;position:relative}
+.canvas-toolbar{height:38px;background:var(--surf);border-bottom:1px solid var(--bord-dk);display:flex;align-items:center;padding:0 10px;gap:6px;flex-shrink:0}
+.ctool{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border:1px solid var(--bord-dk);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.ctool:hover,.ctool.active{border-color:var(--green);color:var(--green)}
+.canvas-info{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted)}
+.canvas-wrap{flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:20px}
+canvas{display:block}
+
+/* RIGHT — visual grid arranger */
+.right-panel{width:240px;flex-shrink:0;background:var(--surf);border-left:1px solid var(--bord-dk);display:flex;flex-direction:column;overflow:hidden}
+.rp-head{padding:10px 12px;border-bottom:1px solid var(--bord-dk);flex-shrink:0}
+.rp-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--text)}
+.rp-sub{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:1px}
+.rp-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column}
+.rp-body::-webkit-scrollbar{width:3px}
+.rp-body::-webkit-scrollbar-thumb{background:var(--bord)}
+
+/* VISUAL GRID ARRANGER */
+.grid-arranger{flex:1;position:relative;min-height:200px}
+.ga-grid{display:grid;gap:4px;position:relative}
+.ga-cell{border:1px dashed var(--bord-dk);min-height:40px;min-width:40px;position:relative;transition:background .2s;display:flex;align-items:center;justify-content:center}
+.ga-cell.has-slot{border:1px solid var(--bord);background:var(--surf2);cursor:grab}
+.ga-cell.has-slot:active{cursor:grabbing}
+.ga-cell.drag-over{border-color:var(--green);background:rgba(109,179,135,.1)}
+.ga-cell.phantom{border:1px dashed rgba(109,179,135,.2);background:rgba(109,179,135,.03)}
+.ga-slot{padding:4px 6px;text-align:center;width:100%}
+.ga-slot-name{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ga-slot-type{font-size:8px;color:var(--muted);margin-top:1px}
+.ga-dot{width:6px;height:6px;border-radius:50%;margin:0 auto 3px}
+
+/* STATUS */
+.status-bar{height:22px;background:var(--black);display:flex;align-items:center;padding:0 14px;gap:14px;flex-shrink:0;border-top:1px solid var(--bord-dk)}
+.si{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--muted2)}
+.si span{color:var(--green)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surf);border:1px solid var(--bord-dk);padding:20px;min-width:300px;max-width:440px;width:100%}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);margin-bottom:14px}
+.modal-actions{display:flex;gap:7px;margin-top:16px;justify-content:flex-end}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:20px;background:var(--surf);border:1px solid var(--green);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:8px 16px;z-index:300;opacity:0;transform:translateY(6px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--surf3)}
+::-webkit-scrollbar-thumb{background:var(--bord);border-radius:2px}
+
+/* FILE EXPLORER */
+.fe-item{display:flex;align-items:center;gap:6px;padding:6px 8px;cursor:pointer;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);border:1px solid transparent}
+.fe-item:hover{background:var(--surf);border-color:var(--bord-dk)}
+.fe-item.selected{background:var(--surf2);border-color:var(--green)}
+.fe-icon{font-size:13px;flex-shrink:0;width:18px;text-align:center}
+.fe-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fe-meta{font-size:8px;color:var(--muted2);flex-shrink:0}
+.fe-actions{display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.fe-item:hover .fe-actions{opacity:1}
+
+/* File Explorer */
+.fe-folder-wrap{margin-bottom:2px}
+.fe-folder-hdr{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--surf2);border:1px solid var(--bord-dk);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text)}
+.fe-folder-hdr.fe-drag-over{outline:2px solid var(--green)}
+.fe-chevron{font-size:10px;width:12px;text-align:center;flex-shrink:0}
+.fe-folder-name{flex:1}
+.fe-count{font-size:8px;color:var(--muted2);flex-shrink:0}
+.fe-folder-body{border-left:2px solid var(--bord-dk);margin-left:10px;padding-left:4px}
+.fe-item{display:flex;align-items:center;gap:6px;padding:5px 8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);border:1px solid transparent;border-top-color:var(--bord-dk);transition:background .15s,border-color .1s}
+.fe-item:hover{background:var(--surf2)}
+.fe-item.fe-top{border-top:2px solid var(--green);padding-top:4px}
+.fe-item.fe-bottom{border-bottom:2px solid var(--green);padding-bottom:4px}
+.fe-item.dragging{opacity:0.4}
+.fe-grip{cursor:grab;color:var(--muted2);font-size:12px;flex-shrink:0}
+.fe-info{flex:1;overflow:hidden;cursor:pointer;min-width:0}
+.fe-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fe-meta{font-size:8px;color:var(--muted2)}
+.fe-empty{padding:8px;font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.fe-acts{display:flex;gap:3px;flex-shrink:0;opacity:0.4;transition:opacity .15s}
+.fe-item:hover .fe-acts,.fe-folder-hdr:hover .fe-acts{opacity:1}
+.fe-acts .ibtn{padding:3px 7px;border-color:var(--bord-dk);background:none;display:flex;align-items:center;justify-content:center;width:26px}
+.fe-acts .ibtn:hover{background:var(--surf2);border-color:var(--green);color:var(--green)}
+.fe-acts .ibtn.del:hover{border-color:#c05050;color:#c05050;background:none}
+.fe-rename-inp{background:var(--surf3);border:1px solid var(--green);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:10px;padding:1px 4px;width:120px;outline:none}
+.fe-check-row{display:flex;align-items:center;gap:8px;padding:4px 8px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);cursor:pointer}
+.fe-check-row:hover{background:var(--surf2)}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">BENJAM IN <span>TRANSIT</span></a>
+  <div class="nav-right">
+    <button class="nbtn" onclick="showSaveModal()" title="Save design">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save
+    </button>
+    <button class="nbtn pri" onclick="orderPrint()" title="Order a printed panel">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Order Print
+    </button>
+    <button class="nbtn grn" onclick="showDownloadModal()" title="Download STL file">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download STL
+    </button>
+    <div style="display:flex;gap:0;border:1px solid var(--bord-dk);border-radius:2px;overflow:hidden">
+      <button class="nbtn" onclick="exportBJP()" title="Export designs to .bjm backup file" style="border:none;border-right:1px solid var(--bord-dk);border-radius:0;gap:4px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export .bjm
+      </button>
+      <button class="nbtn" onclick="document.getElementById('bjmImport').click()" title="Import a .bjm backup file" style="border:none;border-radius:0;gap:4px">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import .bjm
+      </button>
+    </div>
+    <input type="file" id="bjmImport" accept=".bjm,.json" style="display:none" onchange="importBJP(this)">
+  </div>
+</nav>
+
+<div class="studio">
+
+<!-- LEFT SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-tabs">
+    <button class="stab active" onclick="switchTab('slots',this)">Slots</button>
+    <button class="stab" onclick="switchTab('arrange',this)">Arrange</button>
+    <button class="stab" onclick="switchTab('panel',this)">Panel</button>
+    <button class="stab" onclick="switchTab('style',this)">Style</button>
+    <button class="stab" onclick="switchTab('saves',this);renderFileExplorer()">Saved</button>
+  </div>
+
+  <!-- SLOTS TAB -->
+  <div class="sbar-body" id="tab-slots">
+    <div class="sh">Add Slot</div>
+    <div class="add-slot-btns">
+      <button class="add-slot-btn" onclick="addSlot('button')">
+        <span class="asi">⚪</span><span class="asl">Momentary Button</span>
+        <span style="font-size:9px;color:var(--muted2)">16mm hole</span>
+      </button>
+      <button class="add-slot-btn" onclick="addSlot('switch')">
+        <span class="asi"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="asl">Toggle Switch</span>
+        <span style="font-size:9px;color:var(--muted2)">20mm hole</span>
+      </button>
+      <button class="add-slot-btn" onclick="showCustomSlotModal()" style="grid-column:1/-1;border-style:dashed">
+        <span class="asi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span><span class="asl">Custom Slot</span>
+        <span style="font-size:9px;color:var(--muted2)">define your own</span>
+      </button>
+    </div>
+
+    <div class="sh">Slots <span class="sh-action" onclick="clearSlots()">✕ clear all</span></div>
+    <div id="slotList"></div>
+  </div>
+
+  <!-- ARRANGE TAB -->
+  <div class="sbar-body" id="tab-arrange" style="display:none">
+    <div class="sh" style="margin-top:0">Arrangement Grid</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+      Drag slots to any cell. Drag into a faded expansion cell to add rows/columns. Empty cells become gaps in the panel.
+    </div>
+    <div id="gridArranger"></div>
+  </div>
+
+  <!-- ARRANGE TAB -->
+  <div class="sbar-body" id="tab-arrange" style="display:none;overflow-x:auto">
+    <div class="sh" style="margin-top:0">Arrangement Grid</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.5">
+      Drag slots to any cell. Drag to faded + cells to expand. Empty cells = gaps.
+    </div>
+    <div id="gridArranger"></div>
+  </div>
+
+  <!-- PANEL TAB -->
+  <div class="sbar-body" id="tab-panel" style="display:none">
+
+    <div class="sh">Dimensions</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.5">Auto-sized from slots. Enable overrides to adjust.</div>
+
+    <div class="tog-row" style="margin-bottom:6px">
+      <span class="tog-lbl" style="font-size:11px">Override Width &amp; Height</span>
+      <label class="tog"><input type="checkbox" id="overrideDims" onchange="toggleDimsOverride(this.checked)"><span class="tslid"></span></label>
+    </div>
+    <div class="field">
+      <label>Width: <span id="dimW_display" style="color:var(--green)">—</span> <span style="color:var(--muted2);font-size:8px">min <span id="dimW_min">—</span>mm</span></label>
+      <input type="range" id="dimW_val" min="1" max="400" step="1" value="100" data-locked="true" style="pointer-events:none;opacity:0.35"
+        oninput="onDimOverride('W',this.value);document.getElementById('dimW_display').textContent=parseFloat(this.value).toFixed(0)+'mm'">
+    </div>
+    <div class="field">
+      <label>Height: <span id="dimH_display" style="color:var(--green)">—</span> <span style="color:var(--muted2);font-size:8px">min <span id="dimH_min">—</span>mm</span></label>
+      <input type="range" id="dimH_val" min="1" max="300" step="1" value="60" data-locked="true" style="pointer-events:none;opacity:0.35"
+        oninput="onDimOverride('H',this.value);document.getElementById('dimH_display').textContent=parseFloat(this.value).toFixed(0)+'mm'">
+    </div>
+
+    <div class="tog-row" style="margin-top:6px;margin-bottom:6px">
+      <span class="tog-lbl" style="font-size:11px">Override Thickness</span>
+      <label class="tog"><input type="checkbox" id="overrideDepth" onchange="toggleDepthOverride(this.checked)"><span class="tslid"></span></label>
+    </div>
+    <div class="field">
+      <label>Thickness: <span id="dimD_display" style="color:var(--green)">3.0mm</span> <span style="color:var(--muted2);font-size:8px">default 3mm</span></label>
+      <input type="range" id="dimD_val" min="1" max="20" step="0.5" value="3" data-locked="true" style="pointer-events:none;opacity:0.35"
+        oninput="state.panel.depth=Math.max(1,parseFloat(this.value));document.getElementById('dimD_display').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()">
+    </div>
+
+    <div class="sh">Spacing</div>
+    <div class="tog-row" style="margin-bottom:6px">
+      <span class="tog-lbl" style="font-size:11px">Override Spacing</span>
+      <label class="tog"><input type="checkbox" id="overrideSpacing" onchange="toggleSpacingOverride(this.checked)"><span class="tslid"></span></label>
+    </div>
+    <div id="spacingFields" style="opacity:.35;pointer-events:none">
+      <div class="field"><label>Slot Gap: <span id="sp_slotGap_v" style="color:var(--green)">3mm</span> <span style="color:var(--muted2);font-size:8px">default 3mm</span></label>
+        <input type="range" id="sp_slotGap" min="0" max="30" step="0.5" value="3" oninput="state.panel.slotGap=parseFloat(this.value);document.getElementById('sp_slotGap_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+      <div class="field"><label>Edge Margin: <span id="sp_edge_v" style="color:var(--green)">8mm</span> <span style="color:var(--muted2);font-size:8px">default 8mm</span></label>
+        <input type="range" id="sp_edgeMargin" min="2" max="30" step="0.5" value="8" oninput="state.panel.edgeMargin=parseFloat(this.value);document.getElementById('sp_edge_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+      <div class="field"><label>Label Gap: <span id="sp_label_v" style="color:var(--green)">3mm</span> <span style="color:var(--muted2);font-size:8px">default 3mm</span></label>
+        <input type="range" id="sp_labelGap" min="0" max="15" step="0.5" value="3" oninput="state.panel.labelGap=parseFloat(this.value);document.getElementById('sp_label_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+      <div class="field"><label>LED Gap: <span id="sp_led_v" style="color:var(--green)">1mm</span> <span style="color:var(--muted2);font-size:8px">default 1mm</span></label>
+        <input type="range" id="sp_ledGap" min="0" max="10" step="0.5" value="1" oninput="state.panel.ledGap=parseFloat(this.value);document.getElementById('sp_led_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+    </div>
+
+    <div class="sh">Corner Radius</div>
+    <div class="tog-row" style="margin-bottom:6px">
+      <span class="tog-lbl" style="font-size:11px">Override Corner Radius</span>
+      <label class="tog"><input type="checkbox" id="overrideCorner" onchange="toggleCornerOverride(this.checked)"><span class="tslid"></span></label>
+    </div>
+    <div id="cornerFields" style="opacity:.35;pointer-events:none">
+      <div class="field"><label>Panel Corner R: <span id="cr_panel_v" style="color:var(--green)">5mm</span> <span style="color:var(--muted2);font-size:8px">default 5mm</span></label>
+        <input type="range" id="cr_panel" min="0" max="20" step="0.5" value="5" oninput="state.panel.cornerR=parseFloat(this.value);document.getElementById('cr_panel_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+    </div>
+
+
+
+    <div class="sh">Mounting Holes</div>
+    <div class="tog-row" style="margin-bottom:6px">
+      <span class="tog-lbl">Show mounting holes</span>
+      <label class="tog"><input type="checkbox" id="opt_mountHoles" checked onchange="toggleMountOverride(this.checked)"><span class="tslid"></span></label>
+    </div>
+    <div id="mountFields">
+      <div class="tog-row" style="margin-bottom:6px">
+        <span class="tog-lbl" style="font-size:11px">Override hole settings</span>
+        <label class="tog"><input type="checkbox" id="overrideMount" onchange="toggleMountSettings(this.checked)"><span class="tslid"></span></label>
+      </div>
+      <div id="mountSettingsFields" style="opacity:.35;pointer-events:none">
+        <div class="field"><label>Hole Diameter: <span id="mh_diam_v" style="color:var(--green)">5mm</span> <span style="color:var(--muted2);font-size:8px">default 5mm</span></label>
+          <input type="range" id="mh_diam" min="2" max="10" step="0.5" value="5" oninput="state.panel.mountHoleDiam=parseFloat(this.value);document.getElementById('mh_diam_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+        <div class="field"><label>Inset from edge: <span id="mh_inset_v" style="color:var(--green)">6mm</span> <span style="color:var(--muted2);font-size:8px">default 6mm</span></label>
+          <input type="range" id="mh_inset" min="2" max="20" step="0.5" value="6" oninput="state.panel.mountHoleInset=parseFloat(this.value);document.getElementById('mh_inset_v').textContent=parseFloat(this.value).toFixed(1)+'mm';rebuild()"></div>
+      </div>
+    </div>
+
+    <div class="sh">Options</div>
+    <div class="tog-row">
+      <span class="tog-lbl">Show labels</span>
+      <label class="tog"><input type="checkbox" id="opt_showLabels" checked onchange="clearTextureCache();rebuild()"><span class="tslid"></span></label>
+    </div>
+  </div>
+
+  <!-- STYLE TAB -->
+  <div class="sbar-body" id="tab-style" style="display:none">
+    <div class="sh">Colours</div>
+    <div class="r2">
+      <div class="field"><label>Panel Body</label><input type="color" id="col_panel" value="#000000" oninput="state.style.panelCol=this.value;rebuild()"></div>
+      <div class="field"><label>Label Text</label><input type="color" id="col_label" value="#ffffff" oninput="state.style.labelCol=this.value;clearTextureCache();rebuild()"></div>
+    </div>
+
+
+    <div class="sh">Typography</div>
+    <div class="field">
+      <label>Label Font</label>
+      <select id="labelFont" onchange="state.style.labelFont=this.value;clearTextureCache();preloadCurrentFont();rebuild();updateBIUButtons()">
+        <optgroup label="── Sans Serif ──">
+          <option value="OpenSans">Open Sans (Default)</option>
+          <option value="Inter">Inter</option>
+          <option value="Barlow">Barlow</option>
+          <option value="IBMPlexSans">IBM Plex Sans</option>
+          <option value="SpaceGrotesk">Space Grotesk</option>
+        </optgroup>
+        <optgroup label="── Condensed ──">
+          <option value="BebasNeue">Bebas Neue</option>
+          <option value="BarlowCondensed">Barlow Condensed</option>
+          <option value="RobotoCondensed">Roboto Condensed</option>
+          <option value="Rajdhani">Rajdhani</option>
+          <option value="Jura">Jura</option>
+        </optgroup>
+        <optgroup label="── Technical ──">
+          <option value="Orbitron">Orbitron</option>
+          <option value="Exo2">Exo 2</option>
+          <option value="Michroma">Michroma</option>
+          <option value="Quantico">Quantico</option>
+          <option value="AudioWide">Audiowide</option>
+          <option value="BlackOpsOne">Black Ops One</option>
+        </optgroup>
+        <optgroup label="── Monospace ──">
+          <option value="ShareTechMono">Share Tech Mono</option>
+          <option value="IBMPlexMono">IBM Plex Mono</option>
+          <option value="SpaceMono">Space Mono</option>
+          <option value="FiraCode">Fira Code</option>
+          <option value="UbuntuMono">Ubuntu Mono</option>
+          <option value="NovaMono">Nova Mono</option>
+        </optgroup>
+        <optgroup label="── System ──">
+          <option value="ArialNarrow">Arial Narrow</option>
+          <option value="CourierNew">Courier New</option>
+        </optgroup>
+      </select>
+    </div>
+    <div style="display:flex;gap:4px;margin-bottom:8px" id="biuRow">
+      <button id="btnBold" class="ibtn" onclick="toggleFontStyle('labelBold','btnBold')"
+        style="flex:1;justify-content:center;font-weight:700;font-size:12px" title="Bold">B</button>
+      <button id="btnItalic" class="ibtn" onclick="toggleFontStyle('labelItalic','btnItalic')"
+        style="flex:1;justify-content:center;font-style:italic;font-size:12px" title="Italic"><em>I</em></button>
+      <button id="btnUnderline" class="ibtn" onclick="toggleFontStyle('labelUnderline','btnUnderline')"
+        style="flex:1;justify-content:center;font-size:12px;text-decoration:underline" title="Underline">U</button>
+    </div>
+    <div class="field">
+      <label>Label Height: <span id="lblSzVal" style="color:var(--green)">4mm</span> (Default: 4mm)</label>
+      <input type="range" id="lblSize" min="1" max="12" value="4" step="0.5" oninput="state.style.labelSize=parseFloat(this.value);document.getElementById('lblSzVal').textContent=this.value+'mm';clearTextureCache();rebuild()">
+    </div>
+    <div class="field">
+      <label>Label Emboss Depth: <span id="lblDpVal" style="color:var(--green)">1mm</span> <span style="color:var(--muted2);font-size:8px">default 1mm</span></label>
+      <input type="range" id="lblDepth" min="0.3" max="3" value="1" step="0.1" oninput="state.style.labelDepth=parseFloat(this.value);document.getElementById('lblDpVal').textContent=parseFloat(this.value).toFixed(1)+'mm';clearTextureCache();rebuild()">
+    </div>
+  </div>
+
+  <!-- SAVES TAB -->
+  <div class="sbar-body" id="tab-saves" style="display:none;padding:0;overflow:hidden;flex-direction:column">
+    <!-- Toolbar -->
+    <div style="display:flex;gap:4px;padding:8px;background:var(--surf);border-bottom:1px solid var(--bord-dk);flex-shrink:0">
+      <button class="nbtn" style="flex:1;justify-content:center;font-size:9px;padding:5px 4px" onclick="showSaveModal()">💾 Save</button>
+      <button class="nbtn" style="flex:1;justify-content:center;font-size:9px;padding:5px 4px" onclick="feNewFolder()">📁 New Folder</button>
+    </div>
+    <!-- Breadcrumb -->
+    <div id="feBreadcrumb" style="padding:5px 8px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);border-bottom:1px solid var(--bord-dk);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+      / root
+    </div>
+    <!-- File list -->
+    <div id="feList" style="flex:1;overflow-y:auto;padding:4px"></div>
+  </div>
+
+</div><!-- end sidebar -->
+
+<!-- CANVAS -->
+<div class="canvas-area">
+  <div class="canvas-toolbar">
+    <button class="ctool active" onclick="setView('iso',this)">Iso</button>
+    <button class="ctool" onclick="setView('front',this)">Front</button>
+    <button class="ctool" onclick="setView('top',this)">Top</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+<div style="position:relative">
+        <button class="ctool" id="lightingBtn" onclick="toggleLightingPanel()" style="gap:4px">☀ Lighting ▾</button>
+        <div id="lightingPanel" style="display:none;position:absolute;top:34px;right:0;width:160px;background:var(--surf);border:1px solid var(--bord-dk);z-index:200;padding:6px;box-shadow:0 4px 16px rgba(0,0,0,0.5)">
+          <div id="lightPresetCards"></div>
+        </div>
+      </div>
+    </div>
+    <div class="canvas-info" id="canvasInfo" style="margin-left:8px">0 slots</div>
+  </div>
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="c3d"></canvas>
+  </div>
+</div>
+
+</div><!-- end studio -->
+
+<div class="status-bar">
+  <div class="si">Slots: <span id="st_s">0</span></div>
+  <div class="si">W: <span id="st_w">—</span>mm</div>
+  <div class="si">H: <span id="st_h">—</span>mm</div>
+  <div class="si">D: <span id="st_d">3</span>mm</div>
+  <div class="si" style="margin-left:auto">Layout: <span id="st_l">Row</span></div>
+</div>
+
+<!-- DOWNLOAD MODAL -->
+<div class="modal-bg" id="downloadModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">Download STL</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Select what to download</div>
+    <div id="dlTree" style="background:var(--surf3);border:1px solid var(--bord-dk);max-height:200px;overflow-y:auto;padding:4px;margin-bottom:10px;border-radius:2px"></div>
+    <div id="dlNameSection">
+      <div class="field" style="margin-bottom:4px">
+        <label>File name (current panel)</label>
+        <input type="text" id="dlFileName" placeholder="panel-name" style="width:100%">
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:8px">Downloads as <strong id="dlPreview" style="color:var(--green)">panel.stl</strong></div>
+    </div>
+    <div class="modal-actions">
+      <button class="nbtn" onclick="closeModal('downloadModal')">Cancel</button>
+      <button class="nbtn grn" onclick="executeDownload()">⬇ Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT BJM MODAL -->
+<div class="modal-bg" id="exportModal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">Export .bjm File</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Select designs to include</div>
+    <div id="exportTree" style="background:var(--surf3);border:1px solid var(--bord-dk);max-height:180px;overflow-y:auto;padding:4px;margin-bottom:10px;border-radius:2px"></div>
+    <div class="field">
+      <label>File name</label>
+      <input type="text" id="exportFileName" placeholder="benjam-designs" style="width:100%">
+    </div>
+    <div style="font-size:9px;color:var(--muted);margin-bottom:8px">Load it back on any device via 📥 Import — merges with existing designs</div>
+    <div class="modal-actions">
+      <button class="nbtn" onclick="closeModal('exportModal')">Cancel</button>
+      <button class="nbtn grn" onclick="doExportBJM()">📦 Export .bjm</button>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM SLOT MODAL -->
+<div class="modal-bg" id="customSlotModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">Custom Slot Type</div>
+    <div class="r2">
+      <div class="field"><label>Slot Name</label><input type="text" id="cs_name" placeholder="e.g. Rocker Switch"></div>
+      <div class="field"><label>Hole Shape</label>
+        <select id="cs_shape" style="width:100%;background:var(--surf3);border:1px solid var(--bord-dk);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:6px 9px;outline:none" onchange="updateCustomSlotPreview()">
+          <option value="circle">Circle</option>
+          <option value="rect">Rectangle</option>
+          <option value="rounded_rect">Rounded Rectangle</option>
+          <option value="oval">Oval</option>
+        </select>
+      </div>
+    </div>
+    <div id="cs_circle_fields">
+      <div class="field"><label>Diameter: <span id="cs_diam_v" style="color:var(--green)">16mm</span></label>
+        <input type="range" id="cs_diam" min="3" max="50" step="0.5" value="16" oninput="document.getElementById('cs_diam_v').textContent=parseFloat(this.value).toFixed(1)+'mm';updateCustomSlotPreview()"></div>
+    </div>
+    <div id="cs_rect_fields" style="display:none">
+      <div class="r2">
+        <div class="field"><label>Width: <span id="cs_rw_v" style="color:var(--green)">20mm</span></label>
+          <input type="range" id="cs_rw" min="3" max="80" step="0.5" value="20" oninput="document.getElementById('cs_rw_v').textContent=parseFloat(this.value).toFixed(1)+'mm';updateCustomSlotPreview()"></div>
+        <div class="field"><label>Height: <span id="cs_rh_v" style="color:var(--green)">10mm</span></label>
+          <input type="range" id="cs_rh" min="3" max="50" step="0.5" value="10" oninput="document.getElementById('cs_rh_v').textContent=parseFloat(this.value).toFixed(1)+'mm';updateCustomSlotPreview()"></div>
+      </div>
+      <div id="cs_rr_field" style="display:none" class="field"><label>Corner R: <span id="cs_rr_v" style="color:var(--green)">2mm</span></label>
+        <input type="range" id="cs_rr" min="0" max="10" step="0.5" value="2" oninput="document.getElementById('cs_rr_v').textContent=parseFloat(this.value).toFixed(1)+'mm';updateCustomSlotPreview()"></div>
+    </div>
+    <div class="field" style="margin-top:6px"><label>Icon / Symbol</label>
+      <input type="text" id="cs_icon" placeholder="e.g. ⚡ or text" maxlength="4" style="font-size:20px;text-align:center"></div>
+    <!-- Preview -->
+    <div style="margin:10px 0;background:var(--surf3);border:1px solid var(--bord-dk);padding:8px;text-align:center">
+      <div style="font-size:9px;font-family:'Share Tech Mono',monospace;color:var(--muted);margin-bottom:6px;letter-spacing:1px">PREVIEW (front face)</div>
+      <canvas id="cs_preview" width="160" height="100" style="background:#1a1a1a;border-radius:2px"></canvas>
+    </div>
+    <div class="modal-actions">
+      <button class="nbtn" onclick="closeModal('customSlotModal')">Cancel</button>
+      <button class="nbtn grn" onclick="addCustomSlot()">Add Slot</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER NAME MODAL -->
+<div class="modal-bg" id="folderModal">
+  <div class="modal" style="max-width:320px">
+    <div class="modal-title">Folder Name</div>
+    <div class="field">
+      <input type="text" id="folderNameInp" placeholder="e.g. Van Build 1" style="width:100%"
+        onkeydown="if(event.key==='Enter')feNewFolderConfirmActual()">
+    </div>
+    <div class="modal-actions">
+      <button class="nbtn" onclick="closeModal('folderModal');window._feFolderRenameId=null">Cancel</button>
+      <button class="nbtn grn" onclick="feNewFolderConfirmActual()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- SAVE MODAL -->
+<div class="modal-bg" id="saveModal">
+  <div class="modal">
+    <div class="modal-title">Save Design</div>
+    <div class="field"><label>Name</label><input type="text" id="saveName" placeholder="e.g. Main Panel"></div>
+    <div class="modal-actions">
+      <button class="nbtn" onclick="closeModal('saveModal')">Cancel</button>
+      <button class="nbtn grn" onclick="saveDesign()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD MODAL -->
+<div class="modal-bg" id="loadModal">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title">My Designs</div>
+    <div id="loadList" style="max-height:300px;overflow-y:auto;margin-bottom:8px"></div>
+    <div class="modal-actions"><button class="nbtn" onclick="closeModal('loadModal')">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+<script>
+// Custom slot types — must be declared before any function that references it
+const customSlotTypes = {};
+
+// ─────────────────────────────────────────────
+// DEFAULTS & CONSTANTS
+// ─────────────────────────────────────────────
+const DEFAULTS = {
+  // Holes (what gets cut through the panel)
+  BTN_HOLE: 16,        // mm diameter
+  BTN_PANEL: 19.2,     // mm diameter visual circle on panel face
+  SW_HOLE: 20,         // mm diameter
+  SW_NOTCH_W: 1,       // mm — notch width each side
+  SW_NOTCH_H: 2,       // mm — notch height
+  SW_PANEL: 24,        // mm diameter visual on panel face
+  LED_HOLE: 6.8,       // mm diameter
+  LED_PANEL: 8,        // mm visual on panel face
+  // Spacing
+  EDGE_MARGIN: 8,      // mm — space from panel edge to nearest slot feature
+  SLOT_GAP: 3,         // mm — gap between slot features
+  LABEL_GAP: 3,        // mm — gap from slot feature edge to label text
+  LED_GAP: 1,          // mm — gap between led feature and button/switch feature
+  // Panel
+  CORNER_R: 5,         // mm — panel corner radius
+  SLOT_EDGE_R: 1,      // mm — slot area corner radius (not hole, just recessed zone)
+  DEPTH: 3,            // mm — panel thickness
+  LABEL_SIZE: 4,       // mm — label text height
+  LABEL_DEPTH: 1,      // mm — emboss depth
+  MOUNT_HOLE_D: 5,     // mm diameter
+  MOUNT_INSET: 6,      // mm from edges
+};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let slotId = 0;
+let state = {
+  layout: 'row',
+  slots: [],
+  panel: {
+    depth: DEFAULTS.DEPTH,
+    cornerR: DEFAULTS.CORNER_R,
+    slotCornerR: DEFAULTS.SLOT_EDGE_R,
+    edgeMargin: DEFAULTS.EDGE_MARGIN,
+    slotGap: DEFAULTS.SLOT_GAP,
+    labelGap: DEFAULTS.LABEL_GAP,
+    ledGap: DEFAULTS.LED_GAP,
+    overrideW: false, overrideH: false, overrideD: false,
+    customW: null, customH: null,
+    overrideSpacing: false,
+    overrideCorner: false,
+    overrideDepth: false,
+    mountHoleDiam: 5,
+    mountHoleInset: 6,
+  },
+  style: {
+    panelCol: '#000000', labelCol: '#ffffff',
+    btnCol: '#222222', swCol: '#111111',
+    labelFont: 'OpenSans',
+    labelBold: false,
+    labelItalic: false,
+    labelUnderline: false,
+    labelSize: DEFAULTS.LABEL_SIZE,
+    labelDepth: DEFAULTS.LABEL_DEPTH,
+  },
+  options: { mountHoles: true, showLabels: true },
+  selectedSlot: null,
+  wireframe: false,
+};
+
+// ─────────────────────────────────────────────
+// PANEL SIZE CALCULATION
+// ─────────────────────────────────────────────
+function slotFeatureRadius(slot) {
+  if (slot.type === 'button') return DEFAULTS.BTN_PANEL / 2;
+  if (slot.type.startsWith('custom_')) {
+    const ct = customSlotTypes[slot.type];
+    if (ct) return Math.max(ct.diam||0, ct.rw||0, ct.rh||0) / 2;
+  }
+  return DEFAULTS.SW_PANEL / 2;
+}
+
+function ledFeatureRadius() { return DEFAULTS.LED_PANEL / 2; }
+
+// Total "footprint" width and height of a single slot including label
+function slotFootprint(slot, p) {
+  const featR = slotFeatureRadius(slot);
+  const ledR = ledFeatureRadius();
+  const ledGap = p.ledGap;
+  const labelGap = p.labelGap;
+  const labelSize = state.style.labelSize;
+
+  // Core feature extent
+  let coreW, coreH;
+  if (!slot.led) {
+    coreW = featR * 2;
+    coreH = featR * 2;
+  } else {
+    const totalSpan = featR * 2 + ledGap + ledR * 2;
+    if (slot.ledPos === 'left' || slot.ledPos === 'right') {
+      coreW = totalSpan;
+      coreH = Math.max(featR * 2, ledR * 2);
+    } else {
+      coreW = Math.max(featR * 2, ledR * 2);
+      coreH = totalSpan;
+    }
+  }
+
+  // Add label extent
+  const lPos = slot.labelPos || 'bottom';
+  // Approximate label width as ~2.5x height for average text
+  const estLabelW = labelSize * 2.5;
+  const estLabelH = labelSize;
+
+  let totalW = coreW, totalH = coreH;
+  if (lPos === 'bottom' || lPos === 'top') {
+    totalH = coreH + labelGap + estLabelH;
+    totalW = Math.max(coreW, estLabelW);
+  } else {
+    totalW = coreW + labelGap + estLabelW;
+    totalH = Math.max(coreH, estLabelH);
+  }
+
+  return { w: totalW, h: totalH, coreW, coreH };
+}
+
+function calcMinDims() {
+  const p = state.panel;
+  const slots = state.slots;
+  if (!slots.length) return { w: 30, h: 30 };
+
+  const margin = p.edgeMargin;
+  const gap = p.slotGap;
+
+  // Build column widths and row heights from gridMap
+  const cells = {};
+  Object.entries(gridMap).forEach(([key, id]) => {
+    const slot = slots.find(s => s.id === id);
+    if (!slot) return;
+    cells[key] = slotFootprint(slot, p);
+  });
+  if (!Object.keys(cells).length) return { w: 30, h: 30 };
+
+  let maxR = 0, maxC = 0;
+  Object.keys(cells).forEach(k => {
+    const [r,c] = k.split('_').map(Number);
+    maxR = Math.max(maxR, r); maxC = Math.max(maxC, c);
+  });
+
+  const colWidths = Array(maxC+1).fill(0);
+  const rowHeights = Array(maxR+1).fill(0);
+  Object.entries(cells).forEach(([key, fp]) => {
+    const [r,c] = key.split('_').map(Number);
+    colWidths[c] = Math.max(colWidths[c], fp.w);
+    rowHeights[r] = Math.max(rowHeights[r], fp.h);
+  });
+
+  const totalW = colWidths.reduce((a,v)=>a+v,0) + gap * maxC + margin * 2;
+  const totalH = rowHeights.reduce((a,v)=>a+v,0) + gap * maxR + margin * 2;
+  return { w: totalW, h: totalH };
+}
+
+function getPanelDims() {
+  const min = calcMinDims();
+  const p = state.panel;
+  let w = p.overrideW && p.customW ? Math.max(min.w, p.customW) : min.w;
+  let h = p.overrideH && p.customH ? Math.max(min.h, p.customH) : min.h;
+  return { w, h, minW: min.w, minH: min.h };
+}
+
+function getSlotPositions(panW, panH) {
+  // Build positions from gridMap — each slot gets a position based on its grid cell
+  const p = state.panel;
+  const slots = state.slots;
+  if (!slots.length) return [];
+  const gap = p.slotGap;
+  const margin = p.edgeMargin;
+
+  // Get all occupied cells and their footprints
+  const cells = {}; // "r_c" -> {slot, fp}
+  Object.entries(gridMap).forEach(([key, id]) => {
+    const slot = slots.find(s => s.id === id);
+    if (!slot) return;
+    cells[key] = { slot, fp: slotFootprint(slot, p) };
+  });
+  if (!Object.keys(cells).length) return [];
+
+  // Find grid extents
+  let maxR = 0, maxC = 0;
+  Object.keys(cells).forEach(k => {
+    const [r,c] = k.split('_').map(Number);
+    maxR = Math.max(maxR, r); maxC = Math.max(maxC, c);
+  });
+
+  // Compute per-column widths and per-row heights (max footprint in that row/col)
+  const colWidths = Array(maxC+1).fill(0);
+  const rowHeights = Array(maxR+1).fill(0);
+  Object.entries(cells).forEach(([key, {fp}]) => {
+    const [r,c] = key.split('_').map(Number);
+    colWidths[c] = Math.max(colWidths[c], fp.w);
+    rowHeights[r] = Math.max(rowHeights[r], fp.h);
+  });
+
+  // Total content size
+  const totalW = colWidths.reduce((a,v)=>a+v,0) + gap * maxC;
+  const totalH = rowHeights.reduce((a,v)=>a+v,0) + gap * maxR;
+
+  // Start positions (centred in panel)
+  const startX = -totalW/2;
+  const startY = totalH/2;
+
+  // Build positions indexed by slot id
+  const posById = {};
+  Object.entries(cells).forEach(([key, {slot, fp}]) => {
+    const [r,c] = key.split('_').map(Number);
+    const cx = startX + colWidths.slice(0,c).reduce((a,v)=>a+v,0) + gap*c + colWidths[c]/2;
+    const cy = startY - rowHeights.slice(0,r).reduce((a,v)=>a+v,0) - gap*r - rowHeights[r]/2;
+    posById[slot.id] = {x:cx, y:cy, fp};
+  });
+
+  // Return in state.slots order, null for slots not in grid
+  return slots.map(s => posById[s.id] || null);
+}
+
+// ─────────────────────────────────────────────
+// THREE.JS SETUP
+// ─────────────────────────────────────────────
+const canvas3d = document.getElementById('c3d');
+const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true, alpha: false });
+// Cap at 2x — going higher gives no visible benefit but tanks performance
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+// Physically correct lighting makes materials look more like OnShape
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xc8c8c8);
+
+
+// 3-point studio lighting — PBR compatible intensities
+const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+scene.add(ambient);
+
+const keyL = new THREE.DirectionalLight(0xfff8f0, 1.1);
+keyL.position.set(-80, 120, 100);
+keyL.castShadow = true;
+keyL.shadow.mapSize.width = 2048;
+keyL.shadow.mapSize.height = 2048;
+keyL.shadow.camera.near = 1;
+keyL.shadow.camera.far = 600;
+keyL.shadow.camera.left = -200;
+keyL.shadow.camera.right = 200;
+keyL.shadow.camera.top = 200;
+keyL.shadow.camera.bottom = -200;
+keyL.shadow.bias = -0.0005;
+keyL.shadow.normalBias = 0.02;
+scene.add(keyL);
+
+const fillL = new THREE.DirectionalLight(0xe8f0ff, 0.4);
+fillL.position.set(100, 40, 60);
+scene.add(fillL);
+
+const rimL = new THREE.DirectionalLight(0xffffff, 0.12);
+rimL.position.set(20, -80, -120);
+scene.add(rimL);
+
+const bounceL = new THREE.DirectionalLight(0xffe0b0, 0.08);
+bounceL.position.set(0, -100, 40);
+scene.add(bounceL);
+
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+const panelGroup = new THREE.Group();
+scene.add(panelGroup);
+
+let isDrag = false, isRight = false, lastMouse = { x: 0, y: 0 };
+let sph = { theta: 0.6, phi: 0.8, radius: 180 }, pan = { x: 0, y: 0 };
+
+canvas3d.addEventListener('mousedown', e => { isDrag = true; isRight = e.button === 2; lastMouse = { x: e.clientX, y: e.clientY }; });
+canvas3d.addEventListener('contextmenu', e => e.preventDefault());
+window.addEventListener('mouseup', () => isDrag = false);
+window.addEventListener('mousemove', e => {
+  if (!isDrag) return;
+  const dx = e.clientX - lastMouse.x, dy = e.clientY - lastMouse.y;
+  lastMouse = { x: e.clientX, y: e.clientY };
+  if (isRight) { pan.x -= dx * 0.2; pan.y += dy * 0.2; }
+  else { sph.theta -= dx * 0.008; sph.phi = Math.max(0.05, Math.min(Math.PI - 0.05, sph.phi - dy * 0.008)); }
+  updateCamera();
+});
+canvas3d.addEventListener('wheel', e => { sph.radius = Math.max(30, Math.min(800, sph.radius + e.deltaY * 0.3)); updateCamera(); });
+
+function updateCamera() {
+  camera.position.set(
+    pan.x + sph.radius * Math.sin(sph.phi) * Math.sin(sph.theta),
+    pan.y + sph.radius * Math.cos(sph.phi),
+    sph.radius * Math.sin(sph.phi) * Math.cos(sph.theta)
+  );
+  camera.lookAt(pan.x, pan.y, 0);
+}
+
+function setView(v, btn) {
+  if (btn) { document.querySelectorAll('.ctool').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+  pan = { x: 0, y: 0 };
+  if (v === 'front') { sph.theta = 0; sph.phi = Math.PI / 2; sph.radius = 180; }
+  else if (v === 'top') { sph.theta = 0; sph.phi = 0.05; sph.radius = 180; }
+  else { sph.theta = 0.6; sph.phi = 0.8; sph.radius = 180; }
+  updateCamera();
+}
+
+function toggleWireframe() {
+  state.wireframe = !state.wireframe;
+  panelGroup.traverse(c => { if (c.isMesh) c.material.wireframe = state.wireframe; });
+  stlLabelGroup.traverse(c => { if (c.isMesh) c.material.wireframe = state.wireframe; });
+}
+
+// ─────────────────────────────────────────────
+// SHAPE HELPERS — real holes via ExtrudeGeometry
+// ─────────────────────────────────────────────
+function roundedRectShape(w, h, r) {
+  r = Math.max(0, Math.min(r, w/2 - 0.1, h/2 - 0.1));
+  const s = new THREE.Shape();
+  if (r > 0) {
+    s.moveTo(-w/2+r, -h/2);
+    s.lineTo( w/2-r, -h/2); s.quadraticCurveTo( w/2,-h/2, w/2,-h/2+r);
+    s.lineTo( w/2,   h/2-r); s.quadraticCurveTo( w/2, h/2, w/2-r, h/2);
+    s.lineTo(-w/2+r,  h/2); s.quadraticCurveTo(-w/2, h/2,-w/2, h/2-r);
+    s.lineTo(-w/2,  -h/2+r); s.quadraticCurveTo(-w/2,-h/2,-w/2+r,-h/2);
+  } else {
+    s.moveTo(-w/2,-h/2); s.lineTo(w/2,-h/2); s.lineTo(w/2,h/2); s.lineTo(-w/2,h/2);
+  }
+  s.closePath();
+  return s;
+}
+function circleHole(cx, cy, r) {
+  const h = new THREE.Path();
+  h.absarc(cx, cy, r, 0, Math.PI*2, true);
+  return h;
+}
+function rectHole(cx, cy, w, h) {
+  const p = new THREE.Path();
+  p.moveTo(cx-w/2,cy-h/2); p.lineTo(cx+w/2,cy-h/2);
+  p.lineTo(cx+w/2,cy+h/2); p.lineTo(cx-w/2,cy+h/2);
+  p.closePath();
+  return p;
+}
+
+
+
+// ─────────────────────────────────────────────
+// BUILD 3D PANEL — ExtrudeGeometry with real holes
+// ─────────────────────────────────────────────
+function rebuild() {
+  while (panelGroup.children.length) panelGroup.remove(panelGroup.children[0]);
+  while (stlLabelGroup.children.length) stlLabelGroup.remove(stlLabelGroup.children[0]);
+  labelList = [];
+
+  const dims = getPanelDims();
+  const panW = dims.w, panH = dims.h;
+  const depth = state.panel.depth;
+  const p = state.panel, s = state.style;
+  const opts = {
+    mountHoles: document.getElementById('opt_mountHoles').checked,
+    showLabels: document.getElementById('opt_showLabels').checked,
+  };
+
+  const cornerR = p.overrideCorner ? Math.max(0, p.cornerR != null ? p.cornerR : DEFAULTS.CORNER_R) : DEFAULTS.CORNER_R;
+  const positions = getSlotPositions(panW, panH);
+
+  // Build panel shape with all holes punched in at once
+  const panShape = roundedRectShape(panW, panH, cornerR);
+
+  // Helper: get feature X/Y for a slot
+  function slotFeatPos(slot, sx, sy) {
+    const fr = slotFeatureRadius(slot);
+    const lr = ledFeatureRadius();
+    let fx=sx, fy=sy, lx=sx, ly=sy;
+    if (slot.led) {
+      if (slot.ledPos==='right')  {fx=sx-(p.ledGap+lr*2)/2; lx=sx+fr+p.ledGap+lr;}
+      else if(slot.ledPos==='left')  {fx=sx+(p.ledGap+lr*2)/2; lx=sx-fr-p.ledGap-lr;}
+      else if(slot.ledPos==='top')   {fy=sy-(p.ledGap+lr*2)/2; ly=sy+fr+p.ledGap+lr;}
+      else if(slot.ledPos==='bottom'){fy=sy+(p.ledGap+lr*2)/2; ly=sy-fr-p.ledGap-lr;}
+    }
+    return {fx,fy,lx,ly};
+  }
+
+  state.slots.forEach((slot, i) => {
+    if (!positions[i]) return;
+    const {x:sx, y:sy} = positions[i];
+    const {fx,fy,lx,ly} = slotFeatPos(slot, sx, sy);
+    if (slot.type==='button') {
+      panShape.holes.push(circleHole(fx, fy, DEFAULTS.BTN_HOLE/2));
+    } else if (slot.type.startsWith('custom_')) {
+      const ct = customSlotTypes[slot.type];
+      if (ct) {
+        if (ct.shape==='circle') {
+          panShape.holes.push(circleHole(fx, fy, ct.diam/2));
+        } else if (ct.shape==='rect') {
+          panShape.holes.push(rectHole(fx, fy, ct.rw, ct.rh));
+        } else if (ct.shape==='rounded_rect') {
+          // Approximate with rect for now
+          panShape.holes.push(rectHole(fx, fy, ct.rw, ct.rh));
+        } else if (ct.shape==='oval') {
+          // Approximate oval with circle
+          panShape.holes.push(circleHole(fx, fy, Math.max(ct.rw,ct.rh)/2));
+        }
+      }
+    } else if (slot.type==='switch') {
+      // Switch: 20mm circle + 2mm×22mm bar
+      // Two overlapping holes — Three.js ExtrudeGeometry unions them automatically
+      // Switch hole: 20mm circle + 2mm×2mm square notches on left & right
+      // Constructed explicitly with exact corner coordinates — no approximation
+      {
+        const r = DEFAULTS.SW_HOLE / 2; // 10mm
+        const ns = 1; // half-notch size: notch extends 1mm each side of centre
+        // Angle where the horizontal notch lines meet the circle
+        const a0 = Math.asin(ns / r); // angle above/below horizontal
+        const swPath = new THREE.Path();
+        // Start at right notch, bottom-right corner, go clockwise
+        // Right side: bottom arc entry → notch bottom-right → notch top-right → top arc entry
+        swPath.moveTo(fx + r, fy - ns);           // right circle at -a0
+        swPath.lineTo(fx + r + ns, fy - ns);      // notch bottom-right (perfectly horizontal)
+        swPath.lineTo(fx + r + ns, fy + ns);      // notch top-right (vertical line)
+        swPath.lineTo(fx + r, fy + ns);           // back to circle at +a0
+        // Arc from right +a0 → left +a0 (top half, CCW = anticlockwise in THREE coords)
+        swPath.absarc(fx, fy, r, a0, Math.PI - a0, false);
+        // Left side: top arc entry → notch top-left → notch bottom-left → bottom arc entry
+        swPath.lineTo(fx - r - ns, fy + ns);     // notch top-left
+        swPath.lineTo(fx - r - ns, fy - ns);     // notch bottom-left
+        swPath.lineTo(fx - r, fy - ns);          // back to circle at -a0 left side
+        // Arc from left -a0 → right -a0 (bottom half)
+        swPath.absarc(fx, fy, r, Math.PI + a0, Math.PI * 2 - a0, false);
+        swPath.closePath();
+        panShape.holes.push(swPath);
+      }
+    }
+    if (slot.led) panShape.holes.push(circleHole(lx, ly, DEFAULTS.LED_HOLE/2));
+  });
+
+  // Mounting holes
+  if (opts.mountHoles) {
+    const mR = (p.mountHoleDiam || DEFAULTS.MOUNT_HOLE_D) / 2;
+    const inset = p.mountHoleInset || DEFAULTS.MOUNT_INSET;
+    [[-panW/2+inset,panH/2-inset],[panW/2-inset,panH/2-inset],
+     [-panW/2+inset,-panH/2+inset],[panW/2-inset,-panH/2+inset]
+    ].forEach(([cx,cy]) => panShape.holes.push(circleHole(cx, cy, mR)));
+  }
+
+  const panMat = new THREE.MeshPhongMaterial({
+    color: new THREE.Color(s.panelCol),
+    specular: 0x222222, shininess: 40,
+    wireframe: state.wireframe, side: THREE.DoubleSide,
+  });
+
+  // Panel slab: full depth, no bevel
+  const panGeo = new THREE.ExtrudeGeometry(panShape, {
+    depth,
+    bevelEnabled: false,
+    curveSegments: 128,
+  });
+  panGeo.translate(0, 0, -depth/2);
+  const panMesh = new THREE.Mesh(panGeo, panMat);
+  panMesh.castShadow = true;
+  panMesh.receiveShadow = true;
+  panelGroup.add(panMesh);
+
+  // Front-edge fillet: a bevelled annular ring sitting on the front face only
+  // Outer boundary = panel outline, inner boundary = panel outline inset by fR
+  // This gives a smooth rounded transition on the front outer edge only
+  // Add slot details (rim rings, labels) on top
+  state.slots.forEach((slot, i) => {
+    if (!positions[i]) return;
+    const {x:sx, y:sy} = positions[i];
+    drawSlotDetails(slot, sx, sy, depth, s, p, opts);
+  });
+
+  // Update UI dimensions display
+  updateDimsDisplay(panW, panH, dims.minW, dims.minH);
+  document.getElementById('st_s').textContent = state.slots.length;
+  document.getElementById('st_w').textContent = panW.toFixed(1);
+  document.getElementById('st_h').textContent = panH.toFixed(1);
+  document.getElementById('st_d').textContent = depth.toFixed(1);
+  document.getElementById('canvasInfo').textContent = `${state.slots.length} slots — ${panW.toFixed(0)}×${panH.toFixed(0)}×${depth.toFixed(0)}mm`;
+}
+
+function drawSlotDetails(slot, sx, sy, depth, s, p, opts) {
+  const wf = state.wireframe;
+  const featR = slotFeatureRadius(slot);
+  const ledR = ledFeatureRadius();
+  let featX=sx, featY=sy, ledX=sx, ledY=sy;
+  if (slot.led) {
+    if(slot.ledPos==='right')  {featX=sx-(p.ledGap+ledR*2)/2; ledX=sx+featR+p.ledGap+ledR;}
+    else if(slot.ledPos==='left')  {featX=sx+(p.ledGap+ledR*2)/2; ledX=sx-featR-p.ledGap-ledR;}
+    else if(slot.ledPos==='top')   {featY=sy-(p.ledGap+ledR*2)/2; ledY=sy+featR+p.ledGap+ledR;}
+    else if(slot.ledPos==='bottom'){featY=sy+(p.ledGap+ledR*2)/2; ledY=sy-featR-p.ledGap-ledR;}
+  }
+  const panelMat = new THREE.MeshPhongMaterial({
+    color: new THREE.Color(s.panelCol),
+    specular: 0x222222,
+    shininess: 40,
+    wireframe: wf
+  });
+
+  function addRim(cx, cy, outerR, innerR, rimH, mat) {
+    const shape = new THREE.Shape();
+    shape.absarc(0, 0, outerR, 0, Math.PI*2, false);
+    shape.holes.push(circleHole(0, 0, innerR));
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: rimH, bevelEnabled: false, curveSegments: 128 });
+    geo.translate(cx, cy, depth/2);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    panelGroup.add(mesh);
+  }
+
+  // No rim rings — just clean cutouts as requested
+  // LED bezel only (subtle, not prominent)
+  if (slot.led) {
+    const bezShape = new THREE.Shape();
+    bezShape.absarc(0, 0, DEFAULTS.LED_PANEL/2, 0, Math.PI*2, false);
+    bezShape.holes.push(circleHole(0, 0, DEFAULTS.LED_HOLE/2));
+    const bezGeo = new THREE.ExtrudeGeometry(bezShape, {depth:0.3,bevelEnabled:false,curveSegments:128});
+    bezGeo.translate(ledX, ledY, depth/2);
+    const bezMesh = new THREE.Mesh(bezGeo, new THREE.MeshPhongMaterial({color:0x2a2a2a,shininess:80,wireframe:wf}));
+    bezMesh.castShadow = true; bezMesh.receiveShadow = true;
+    panelGroup.add(bezMesh);
+  }
+
+  if (opts.showLabels && slot.label) {
+    const sizeMM = slot.labelSizeOverride && slot.labelSize ? slot.labelSize : state.style.labelSize;
+    const labelDepth = Math.max(0.3, state.style.labelDepth || DEFAULTS.LABEL_DEPTH);
+    const col = new THREE.Color(s.labelCol);
+    const rotated = false; // labels always horizontal
+    const approxW = slot.label.length * sizeMM * 0.6;
+    const approxH = sizeMM * 1.2;
+    let cx=featX, cy=featY;
+    if(slot.led&&(slot.ledPos==='left'||slot.ledPos==='right')) cx=(featX+ledX)/2;
+    else if(slot.led&&(slot.ledPos==='top'||slot.ledPos==='bottom')) cy=(featY+ledY)/2;
+    const lGap=p.labelGap, pos=slot.labelPos||'bottom';
+    let lx=cx, ly=cy;
+    const oS=slot.led&&(slot.ledPos==='left'||slot.ledPos==='right')?featR+p.ledGap+ledR*2:featR;
+    const oV=slot.led&&(slot.ledPos==='top'||slot.ledPos==='bottom')?featR+p.ledGap+ledR*2:featR;
+    if(pos==='bottom')     ly=cy-oV-lGap-approxH/2;
+    else if(pos==='top')   ly=cy+oV+lGap+approxH/2;
+    else if(pos==='left')  lx=cx-oS-lGap-approxH/2;
+    else if(pos==='right') lx=cx+oS+lGap+approxH/2;
+    // Build pixel geometry — visible in preview AND included in STL export
+    addLabelSTLGeometry(slot.label, sizeMM, col, state.style.labelFont, rotated,
+      lx, ly, depth/2 + labelDepth/2);
+  }
+}
+
+
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// LABEL RENDERER
+// Preview:  canvas texture plane (any Google Font)
+// STL:      Three.js FontLoader with typeface.json
+//           All 9 fonts load from jsDelivr CDN
+// ─────────────────────────────────────────────
+
+// { css: font-family string, baseWeight: normal weight, bold: supports bold, italic: supports italic }
+const FONT_DEFS = {
+  'OpenSans':        { css:'"Open Sans",sans-serif',           baseWeight:400, bold:true,  italic:false },
+  'ShareTechMono':   { css:'"Share Tech Mono",monospace',      baseWeight:400, bold:false, italic:false },
+  'BebasNeue':       { css:'"Bebas Neue",sans-serif',          baseWeight:400, bold:false, italic:false },
+  // Oswald removed — doesn't load reliably
+  'RobotoCondensed': { css:'"Roboto Condensed",sans-serif',    baseWeight:400, bold:true,  italic:true  },
+  'Rajdhani':        { css:'"Rajdhani",sans-serif',            baseWeight:400, bold:true,  italic:false },
+  'Exo2':            { css:'"Exo 2",sans-serif',               baseWeight:400, bold:true,  italic:true  },
+  'Orbitron':        { css:'"Orbitron",sans-serif',            baseWeight:400, bold:true,  italic:false },
+  'ArialNarrow':     { css:'"Arial Narrow",Arial,sans-serif',  baseWeight:400, bold:true,  italic:true  },
+  'CourierNew':      { css:'"Courier New",monospace',          baseWeight:400, bold:true,  italic:true  },
+  'Inter':           { css:'"Inter",sans-serif',               baseWeight:400, bold:true,  italic:true  },
+  'Barlow':          { css:'"Barlow",sans-serif',              baseWeight:400, bold:true,  italic:true  },
+  'BarlowCondensed': { css:'"Barlow Condensed",sans-serif',    baseWeight:400, bold:true,  italic:true  },
+  'IBMPlexMono':     { css:'"IBM Plex Mono",monospace',        baseWeight:400, bold:true,  italic:true  },
+  'IBMPlexSans':     { css:'"IBM Plex Sans",sans-serif',       baseWeight:400, bold:true,  italic:true  },
+  'SpaceMono':       { css:'"Space Mono",monospace',           baseWeight:400, bold:true,  italic:true  },
+  'SpaceGrotesk':    { css:'"Space Grotesk",sans-serif',       baseWeight:400, bold:true,  italic:false },
+  'Jura':            { css:'"Jura",sans-serif',                baseWeight:400, bold:true,  italic:false },
+  'Michroma':        { css:'"Michroma",sans-serif',            baseWeight:400, bold:false, italic:false },
+  'Quantico':        { css:'"Quantico",sans-serif',            baseWeight:400, bold:true,  italic:true  },
+  'BlackOpsOne':     { css:'"Black Ops One",cursive',          baseWeight:400, bold:false, italic:false },
+  'AudioWide':       { css:'"Audiowide",sans-serif',           baseWeight:400, bold:false, italic:false },
+  'NovaMono':        { css:'"Nova Mono",monospace',            baseWeight:400, bold:false, italic:false },
+  'UbuntuMono':      { css:'"Ubuntu Mono",monospace',          baseWeight:400, bold:true,  italic:true  },
+  'FiraCode':        { css:'"Fira Code",monospace',            baseWeight:400, bold:true,  italic:false },
+};
+// Keep FONT_MAP as alias for CSS lookups
+const FONT_MAP = Object.fromEntries(Object.entries(FONT_DEFS).map(([k,v])=>[k,v.css]));
+
+// Map UI font keys to best-match typeface.json for STL export
+const BASE = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/';
+const STL_FONT_URLS = {
+  // Sans-serif → Helvetiker Bold
+  'OpenSans':        BASE + 'helvetiker_bold.typeface.json',
+  'Inter':           BASE + 'helvetiker_bold.typeface.json',
+  'Barlow':          BASE + 'helvetiker_regular.typeface.json',
+  'BarlowCondensed': BASE + 'helvetiker_regular.typeface.json',
+  'IBMPlexSans':     BASE + 'helvetiker_regular.typeface.json',
+  'SpaceGrotesk':    BASE + 'helvetiker_bold.typeface.json',
+  'Jura':            BASE + 'gentilis_regular.typeface.json',
+  // Condensed → Helvetiker Regular (closest available)
+  'BebasNeue':       BASE + 'helvetiker_bold.typeface.json',
+  'Oswald':          BASE + 'helvetiker_bold.typeface.json',
+  'RobotoCondensed': BASE + 'helvetiker_regular.typeface.json',
+  'Rajdhani':        BASE + 'gentilis_regular.typeface.json',
+  // Technical → Optimer
+  'Orbitron':        BASE + 'optimer_bold.typeface.json',
+  'Exo2':            BASE + 'optimer_regular.typeface.json',
+  'Michroma':        BASE + 'optimer_bold.typeface.json',
+  'Quantico':        BASE + 'optimer_regular.typeface.json',
+  'AudioWide':       BASE + 'optimer_bold.typeface.json',
+  'BlackOpsOne':     BASE + 'optimer_bold.typeface.json',
+  // Monospace → Droid Sans
+  'ShareTechMono':   BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'IBMPlexMono':     BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'SpaceMono':       BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'FiraCode':        BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'NovaMono':        BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'UbuntuMono':      BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'CourierNew':      BASE + 'droid/droid_sans_mono_regular.typeface.json',
+  'ArialNarrow':     BASE + 'helvetiker_regular.typeface.json',
+};
+
+// Font cache
+const _fontCache = {};
+const _fontLoading = {};
+const _fontCallbacks = {};
+const _fontLoader = new THREE.FontLoader();
+
+// Bold variant map — for each font, which typeface.json to use when bold=true
+const STL_BOLD_URLS = {
+  'OpenSans_bold':        BASE + 'helvetiker_bold.typeface.json',
+  'Inter_bold':           BASE + 'helvetiker_bold.typeface.json',
+  'Barlow_bold':          BASE + 'helvetiker_bold.typeface.json',
+  'BarlowCondensed_bold': BASE + 'helvetiker_bold.typeface.json',
+  'Rajdhani_bold':        BASE + 'gentilis_bold.typeface.json',
+  'Jura_bold':            BASE + 'gentilis_bold.typeface.json',
+  'Orbitron_bold':        BASE + 'optimer_bold.typeface.json',
+  'Exo2_bold':            BASE + 'optimer_bold.typeface.json',
+  'Michroma_bold':        BASE + 'optimer_bold.typeface.json',
+  'Quantico_bold':        BASE + 'optimer_bold.typeface.json',
+  'AudioWide_bold':       BASE + 'optimer_bold.typeface.json',
+  'BlackOpsOne_bold':     BASE + 'optimer_bold.typeface.json',
+  'ShareTechMono_bold':   BASE + 'droid/droid_sans_bold.typeface.json',
+  'IBMPlexMono_bold':     BASE + 'droid/droid_sans_bold.typeface.json',
+  'SpaceMono_bold':       BASE + 'droid/droid_sans_bold.typeface.json',
+  'Droid_bold':           BASE + 'droid/droid_sans_bold.typeface.json',
+};
+
+function loadSTLFont(fontKey, cb) {
+  const url = STL_BOLD_URLS[fontKey] || STL_FONT_URLS[fontKey.replace('_bold','')] || (BASE + 'helvetiker_bold.typeface.json');
+  if (_fontCache[url]) { cb(_fontCache[url]); return; }
+  (_fontCallbacks[url] = _fontCallbacks[url] || []).push(cb);
+  if (_fontLoading[url]) return;
+  _fontLoading[url] = true;
+  _fontLoader.load(url,
+    font => {
+      _fontCache[url] = font;
+      _fontLoading[url] = false;
+      (_fontCallbacks[url] || []).forEach(fn => fn(font));
+      _fontCallbacks[url] = [];
+    },
+    undefined,
+    () => {
+      // Fallback to helvetiker regular
+      const fallback = BASE + 'helvetiker_regular.typeface.json';
+      if (_fontCache[fallback]) {
+        (_fontCallbacks[url]||[]).forEach(fn => fn(_fontCache[fallback]));
+        _fontCallbacks[url] = [];
+        return;
+      }
+      _fontLoader.load(fallback, font => {
+        _fontCache[fallback] = font;
+        (_fontCallbacks[url]||[]).forEach(fn => fn(font));
+        _fontCallbacks[url] = [];
+      });
+    }
+  );
+}
+
+function toggleFontStyle(prop, btnId) {
+  const def = FONT_DEFS[state.style.labelFont] || FONT_DEFS['OpenSans'];
+  // Don't toggle if font doesn't support it
+  if (prop === 'labelBold'   && !def.bold)   return;
+  if (prop === 'labelItalic' && !def.italic) return;
+  state.style[prop] = !state.style[prop];
+  clearTextureCache();
+  rebuild();
+  updateBIUButtons();
+}
+
+function updateBIUButtons() {
+  const def = FONT_DEFS[state.style.labelFont] || FONT_DEFS['OpenSans'];
+  const boldBtn   = document.getElementById('btnBold');
+  const italicBtn = document.getElementById('btnItalic');
+  const ulBtn     = document.getElementById('btnUnderline');
+  if (!boldBtn) return;
+
+  function applyBtn(btn, supported, active) {
+    btn.style.opacity        = supported ? '1' : '0.3';
+    btn.style.pointerEvents  = supported ? 'auto' : 'none';
+    btn.style.cursor         = supported ? 'pointer' : 'default';
+    btn.classList.toggle('active', supported && active);
+  }
+
+  applyBtn(boldBtn,   def.bold,   !!state.style.labelBold);
+  applyBtn(italicBtn, def.italic, !!state.style.labelItalic);
+  applyBtn(ulBtn,     true,       !!state.style.labelUnderline);
+}
+
+function preloadCurrentFont() {
+  loadSTLFont(state.style.labelFont, () => { clearTextureCache(); rebuild(); });
+}
+
+const labelTexCache = new Map();
+const stlLabelGroup = new THREE.Group();
+scene.add(stlLabelGroup);
+
+function clearTextureCache() {
+  labelTexCache.clear();
+  while (stlLabelGroup.children.length) stlLabelGroup.remove(stlLabelGroup.children[0]);
+}
+
+// Preview mesh — canvas texture plane, any font, sharp
+function makeTextMesh(str, sizeMM, col, fontKey, rotated) {
+  if (!str || !str.trim()) return null;
+  const def = FONT_DEFS[fontKey] || FONT_DEFS['OpenSans'];
+  const fontFamily = def.css;
+  const bold = state.style.labelBold && def.bold;
+  const italic = state.style.labelItalic && def.italic;
+  const underline = state.style.labelUnderline;
+  const DPI = 16;
+  const fontPx = Math.max(16, Math.round(sizeMM * DPI));
+  const weight = bold ? 700 : def.baseWeight;
+  const fontStyle = `${italic ? 'italic ' : ''}${weight} ${fontPx}px ${fontFamily}`;
+  const cacheKey = `${str}|${Math.round(sizeMM*10)}|${col.getHexString()}|${fontKey}|${bold?'b':''}${italic?'i':''}${underline?'u':''}`;
+  let tex, planeW, planeH;
+  if (labelTexCache.has(cacheKey)) {
+    ({ tex, planeW, planeH } = labelTexCache.get(cacheKey));
+  } else {
+    const tmp = document.createElement('canvas').getContext('2d');
+    tmp.font = fontStyle;
+    const tw = tmp.measureText(str).width;
+    const cW = Math.ceil(tw + fontPx*0.3), cH = Math.ceil(fontPx*1.4);
+    const cv = document.createElement('canvas');
+    cv.width = cW; cv.height = cH;
+    const ctx = cv.getContext('2d');
+    ctx.clearRect(0,0,cW,cH);
+    ctx.font = fontStyle;
+    ctx.fillStyle = `#${col.getHexString()}`;
+    ctx.textAlign = 'center';
+    // Use fixed baseline offset for consistent centering regardless of string content
+    // Cap-height centre ≈ 71.5% of em above baseline; baseline sits at ~80% of canvas height
+    ctx.textBaseline = 'alphabetic';
+    const baselineY = cH * 0.72; // fixed baseline position
+    ctx.fillText(str, cW/2, baselineY);
+    // Underline
+    if (underline) {
+      const uw = tmp.measureText(str).width;
+      const ux = (cW - uw)/2;
+      const uy = baselineY + fontPx*0.12;
+      ctx.fillRect(ux, uy, uw, Math.max(1, fontPx*0.07));
+    }
+    tex = new THREE.CanvasTexture(cv);
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    planeW = cW/DPI; planeH = cH/DPI;
+    labelTexCache.set(cacheKey, { tex, planeW, planeH });
+  }
+  const geo = new THREE.PlaneGeometry(planeW, planeH);
+  const mat = new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide});
+  const mesh = new THREE.Mesh(geo, mat);
+  if (rotated) mesh.rotation.z = Math.PI/2;
+  return { mesh, w: planeW, h: planeH };
+}
+
+// STL geometry — Three.js FontLoader typeface.json, async
+function addLabelSTLGeometry(str, sizeMM, col, fontKey, rotated, wx, wy, wz) {
+  if (!str || !str.trim()) return;
+  const labelDepth = Math.max(0.3, state.style.labelDepth || DEFAULTS.LABEL_DEPTH);
+  const bold = state.style.labelBold;
+  const italic = state.style.labelItalic;
+  const underline = state.style.labelUnderline;
+  // For STL: prefer bold variant if bold is on
+  const stlFontKey = bold ? fontKey + '_bold' : fontKey;
+  loadSTLFont(stlFontKey, font => {
+    try {
+      const shapes = font.generateShapes(str, sizeMM);
+      const geo = new THREE.ExtrudeBufferGeometry(shapes, {
+        depth: labelDepth,
+        bevelEnabled: false,
+        curveSegments: 6,
+      });
+      geo.computeBoundingBox();
+      const bb = geo.boundingBox;
+      const cx = (bb.max.x + bb.min.x) / 2;
+      // Use cap-height centre for consistent vertical positioning
+      // Cap height ≈ 71.5% of em for this font family
+      // Centre = midpoint between baseline and cap-top
+      const capCY = sizeMM * 0.357;
+      geo.translate(-cx, -capCY, -labelDepth/2);
+      const mat = new THREE.MeshPhongMaterial({color: col, shininess: 30});
+      const mesh = new THREE.Mesh(geo, mat);
+      if (rotated) mesh.rotation.z = Math.PI/2;
+      mesh.position.set(wx, wy, wz);
+      stlLabelGroup.add(mesh);
+      // Underline geometry for STL
+      if (underline) {
+        geo.computeBoundingBox();
+        const bb2 = geo.boundingBox;
+        const uw = bb2.max.x - bb2.min.x;
+        const uh = Math.max(0.3, sizeMM * 0.07);
+        const uy = bb2.min.y - labelDepth * 0.3;
+        const ulGeo = new THREE.BoxGeometry(uw, uh, labelDepth);
+        ulGeo.translate(0, uy - uh/2, 0);
+        const ulMesh = new THREE.Mesh(ulGeo, new THREE.MeshPhongMaterial({color: col}));
+        if (rotated) ulMesh.rotation.z = Math.PI/2;
+        ulMesh.position.set(wx, wy, wz);
+        stlLabelGroup.add(ulMesh);
+      }
+    } catch(e) {
+      console.warn('STL label failed:', e);
+    }
+  });
+}
+// ─────────────────────────────────────────────
+// SLOT MANAGEMENT
+// ─────────────────────────────────────────────
+const TYPE_COL = { button: '#5ba3e8', switch: '#6db387' };
+
+function showCustomSlotModal() {
+  updateCustomSlotPreview();
+  document.getElementById('customSlotModal').classList.add('open');
+}
+
+function updateCustomSlotPreview() {
+  const shape = document.getElementById('cs_shape').value;
+  // Show/hide relevant fields
+  document.getElementById('cs_circle_fields').style.display = shape==='circle' ? 'block' : 'none';
+  document.getElementById('cs_rect_fields').style.display = ['rect','rounded_rect','oval'].includes(shape) ? 'block' : 'none';
+  document.getElementById('cs_rr_field').style.display = shape==='rounded_rect' ? 'block' : 'none';
+
+  const cv = document.getElementById('cs_preview');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0,0,W,H);
+
+  // Draw hole preview
+  const diam = parseFloat(document.getElementById('cs_diam').value) || 16;
+  const rw = parseFloat(document.getElementById('cs_rw').value) || 20;
+  const rh = parseFloat(document.getElementById('cs_rh').value) || 10;
+  const rr = parseFloat(document.getElementById('cs_rr').value) || 2;
+  const scale = Math.min((W-20) / (shape==='circle'?diam:rw), (H-20) / (shape==='circle'?diam:rh));
+  const cx = W/2, cy = H/2;
+
+  ctx.fillStyle = '#888';
+  ctx.beginPath();
+  if (shape==='circle') {
+    ctx.arc(cx, cy, diam/2*scale, 0, Math.PI*2);
+  } else if (shape==='rect') {
+    ctx.rect(cx-rw/2*scale, cy-rh/2*scale, rw*scale, rh*scale);
+  } else if (shape==='rounded_rect') {
+    const r = Math.min(rr*scale, rw/2*scale, rh/2*scale);
+    const x=cx-rw/2*scale, y=cy-rh/2*scale, w=rw*scale, h=rh*scale;
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+    ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+  } else if (shape==='oval') {
+    ctx.ellipse(cx, cy, rw/2*scale, rh/2*scale, 0, 0, Math.PI*2);
+  }
+  ctx.fill();
+  // Dim label
+  const icon = document.getElementById('cs_icon').value || '✦';
+  ctx.fillStyle = '#888';
+  ctx.font = '10px Share Tech Mono';
+  ctx.textAlign='center';
+  ctx.fillText(shape==='circle' ? `⌀${diam}mm` : `${rw}×${rh}mm`, cx, H-6);
+}
+
+function addCustomSlot() {
+  const name = document.getElementById('cs_name').value.trim() || 'Custom';
+  const shape = document.getElementById('cs_shape').value;
+  const diam = parseFloat(document.getElementById('cs_diam').value) || 16;
+  const rw = parseFloat(document.getElementById('cs_rw').value) || 20;
+  const rh = parseFloat(document.getElementById('cs_rh').value) || 10;
+  const rr = parseFloat(document.getElementById('cs_rr').value) || 2;
+  const icon = document.getElementById('cs_icon').value || '✦';
+  const typeKey = 'custom_' + Date.now();
+
+  customSlotTypes[typeKey] = { name, shape, diam, rw, rh, rr, icon };
+  TYPE_COL[typeKey] = '#e8a030';
+
+  closeModal('customSlotModal');
+  addSlot(typeKey);
+}
+
+function addSlot(type) {
+  const id = ++slotId;
+  const defaultLabel = type === 'button' ? 'BTN' : type === 'switch' ? 'SW' : (customSlotTypes[type]?.name?.slice(0,6).toUpperCase() || 'CUST');
+  state.slots.push({
+    id, type,
+    label: defaultLabel,
+    labelPos: 'bottom',
+    led: false,
+    ledPos: 'right',
+  });
+  // Place in next available grid cell
+  let placed = false;
+  for (let r = 0; r < 20 && !placed; r++) {
+    for (let c = 0; c < 20 && !placed; c++) {
+      if (!gridMap[`${r}_${c}`]) {
+        gridMap[`${r}_${c}`] = id;
+        recalcGridBounds();
+        placed = true;
+      }
+    }
+  }
+  renderSlotList();
+  renderGridArranger();
+  rebuild();
+}
+
+function duplicateSlot(id) {
+  const original = state.slots.find(s => s.id === id);
+  if (!original) return;
+  const newId = ++slotId;
+  const copy = JSON.parse(JSON.stringify(original));
+  copy.id = newId;
+  copy.label = original.label + '2';
+  const idx = state.slots.findIndex(s => s.id === id);
+  state.slots.splice(idx + 1, 0, copy);
+  // Place copy in grid next to original
+  const origKey = Object.keys(gridMap).find(k => gridMap[k] === id);
+  if (origKey) {
+    const [r, c] = origKey.split('_').map(Number);
+    // Try to place at c+1 same row, else find empty cell
+    const nextKey = `${r}_${c+1}`;
+    if (!gridMap[nextKey]) {
+      gridMap[nextKey] = newId;
+    } else {
+      for (let rr=0; rr<20; rr++) for (let cc=0; cc<20; cc++) {
+        const k = `${rr}_${cc}`;
+        if (!gridMap[k]) { gridMap[k] = newId; rr=20; cc=20; }
+      }
+    }
+    recalcGridBounds();
+  }
+  renderSlotList();
+  renderGridArranger();
+  rebuild();
+}
+
+function removeSlot(id) {
+  state.slots = state.slots.filter(s => s.id !== id);
+  // Remove from grid
+  Object.keys(gridMap).forEach(k => { if (gridMap[k] === id) delete gridMap[k]; });
+  recalcGridBounds();
+  if (state.selectedSlot === id) state.selectedSlot = null;
+  renderSlotList(); renderGridArranger(); rebuild();
+}
+
+function clearSlots() {
+  state.slots = []; state.selectedSlot = null;
+  gridMap = {}; gridRows = 1; gridCols = 1;
+  renderSlotList(); renderGridArranger(); rebuild();
+}
+
+let _rebuildTimer = null;
+function updateSlotProp(id, key, val) {
+  const s = state.slots.find(s => s.id === id);
+  if (!s) return;
+  s[key] = val;
+  if (key !== 'label') {
+    renderSlotList();
+    renderGridArranger();
+  }
+  // Debounce rebuild for continuous sliders (labelSize, etc)
+  if (key === 'labelSize' || key === 'labelSizeOverride') {
+    clearTextureCache();
+    clearTimeout(_rebuildTimer);
+    _rebuildTimer = setTimeout(rebuild, 150);
+  } else {
+    rebuild();
+  }
+}
+
+function selectSlot(id) {
+  state.selectedSlot = state.selectedSlot === id ? null : id;
+  renderSlotList();
+}
+
+function renderSlotList() {
+  const el = document.getElementById('slotList');
+  el.innerHTML = '';
+  if (!state.slots.length) {
+    el.innerHTML = '<div style="color:var(--muted2);font-size:10px;text-align:center;padding:16px">No slots yet — add one above</div>';
+    return;
+  }
+  state.slots.forEach((slot, i) => {
+    const isSelected = state.selectedSlot === slot.id;
+    const col = TYPE_COL[slot.type] || '#888';
+    const card = document.createElement('div');
+    card.className = 'slot-card' + (isSelected ? ' selected' : '');
+
+    card.innerHTML = `
+      <div class="slot-card-header" onclick="selectSlot(${slot.id})">
+        <span class="slot-dot" style="background:${col}"></span>
+        <span class="slot-card-name">Slot ${i + 1}: ${slot.label || '(no label)'}</span>
+        <span class="slot-card-type">${slot.type.startsWith('custom_') ? (customSlotTypes[slot.type]?.name||'custom') : slot.type}</span>
+        <button class="ibtn" style="margin-left:auto;font-size:9px;padding:2px 5px" onclick="event.stopPropagation();duplicateSlot(${slot.id})" title="Duplicate">⧉</button>
+        <button class="ibtn del" style="font-size:10px;padding:2px 6px" onclick="event.stopPropagation();removeSlot(${slot.id})">✕</button>
+      </div>
+      ${isSelected ? renderSlotEditor(slot) : ''}
+    `;
+    el.appendChild(card);
+  });
+}
+
+function renderSlotEditor(slot) {
+  const labelPosOpts = ['top', 'bottom', 'left', 'right'].map(p =>
+    `<button class="ibtn ${slot.labelPos === p ? 'active' : ''}" onclick="updateSlotProp(${slot.id},'labelPos','${p}')">${p.charAt(0).toUpperCase() + p.slice(1)}</button>`
+  ).join('');
+
+  const ledPosOpts = ['top', 'bottom', 'left', 'right'].map(p =>
+    `<button class="ibtn ${slot.ledPos === p ? 'active' : ''}" onclick="updateSlotProp(${slot.id},'ledPos','${p}')">${p.charAt(0).toUpperCase() + p.slice(1)}</button>`
+  ).join('');
+
+  const availTypes = ['button', 'switch', ...Object.keys(customSlotTypes)];
+  const typeOpts = availTypes.map(t => {
+    const label = t.startsWith('custom_') ? (customSlotTypes[t]?.name || 'Custom') : (t.charAt(0).toUpperCase()+t.slice(1));
+    return `<button class="ibtn ${slot.type===t?'active':''}" onclick="updateSlotProp(${slot.id},'type','${t}')">${label}</button>`;
+  }).join('');
+
+  return `
+    <div class="slot-card-body">
+      <div class="field" style="margin-bottom:8px">
+        <label>Label Text</label>
+        <input type="text" value="${slot.label}" maxlength="12" oninput="clearTextureCache();updateSlotProp(${slot.id},'label',this.value)" placeholder="e.g. Lights">
+      </div>
+
+      <div style="margin-bottom:8px">
+        <div class="flbl">Type</div>
+        <div class="irow">${typeOpts}</div>
+      </div>
+
+      <div style="margin-bottom:8px">
+        <div class="flbl">Label Position</div>
+        <div class="irow" style="flex-wrap:wrap;gap:3px">${labelPosOpts}</div>
+      </div>
+
+      <div class="tog-row" style="margin-bottom:${slot.led ? '6px' : '0'}">
+        <span class="tog-lbl" style="font-size:11px">LED Indicator</span>
+        <label class="tog"><input type="checkbox" ${slot.led ? 'checked' : ''} onchange="updateSlotProp(${slot.id},'led',this.checked)"><span class="tslid"></span></label>
+      </div>
+
+      ${slot.led ? `
+      <div>
+        <div class="flbl">LED Position</div>
+        <div class="irow" style="flex-wrap:wrap;gap:3px">${ledPosOpts}</div>
+        <div style="font-size:9px;color:var(--muted2);margin-top:3px">Label will centre between slot and LED</div>
+      </div>` : ''}
+
+      <div class="tog-row" style="margin-top:8px;margin-bottom:${slot.labelSizeOverride ? '6px' : '0'}">
+        <span class="tog-lbl" style="font-size:11px">Override label size</span>
+        <label class="tog"><input type="checkbox" ${slot.labelSizeOverride ? 'checked' : ''}
+          onchange="updateSlotProp(${slot.id},'labelSizeOverride',this.checked)"><span class="tslid"></span></label>
+      </div>
+      ${slot.labelSizeOverride ? `
+      <div class="field">
+        <label>Label Size: <span id="lso-${slot.id}" style="color:var(--green)">${(slot.labelSize||4).toFixed(1)}mm</span></label>
+        <input type="range" min="1" max="14" step="0.5" value="${slot.labelSize||4}"
+          oninput="const v=parseFloat(this.value);updateSlotProp(${slot.id},'labelSize',v);const el=document.getElementById('lso-${slot.id}');if(el)el.textContent=v.toFixed(1)+'mm'">
+      </div>` : ''}
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+// DIMENSION LOCK / OVERRIDE
+// ─────────────────────────────────────────────
+function toggleDimsOverride(on) {
+  state.panel.overrideW = on;
+  state.panel.overrideH = on;
+  const wSlider = document.getElementById('dimW_val');
+  const hSlider = document.getElementById('dimH_val');
+  wSlider.style.pointerEvents = on ? 'auto' : 'none';
+  hSlider.style.pointerEvents = on ? 'auto' : 'none';
+  wSlider.style.opacity = on ? '1' : '0.35';
+  hSlider.style.opacity = on ? '1' : '0.35';
+  if (on) {
+    const dims = getPanelDims();
+    wSlider.min = dims.minW.toFixed(0);
+    wSlider.value = Math.max(dims.minW, dims.w).toFixed(0);
+    hSlider.min = dims.minH.toFixed(0);
+    hSlider.value = Math.max(dims.minH, dims.h).toFixed(0);
+    state.panel.customW = parseFloat(wSlider.value);
+    state.panel.customH = parseFloat(hSlider.value);
+  } else {
+    state.panel.customW = null;
+    state.panel.customH = null;
+  }
+  rebuild();
+}
+
+function onDimOverride(dim, val) {
+  const dims = getPanelDims();
+  const minVal = dim === 'W' ? dims.minW : dims.minH;
+  const clamped = Math.max(minVal, parseFloat(val) || minVal);
+  if (dim === 'W') state.panel.customW = clamped;
+  if (dim === 'H') state.panel.customH = clamped;
+  rebuild();
+}
+
+function updateDimsDisplay(panW, panH, minW, minH) {
+  document.getElementById('dimW_display').textContent = panW.toFixed(0) + 'mm';
+  document.getElementById('dimH_display').textContent = panH.toFixed(0) + 'mm';
+  document.getElementById('dimD_display').textContent = state.panel.depth.toFixed(1) + 'mm';
+  document.getElementById('dimW_min').textContent = minW.toFixed(0);
+  document.getElementById('dimH_min').textContent = minH.toFixed(0);
+  // Update slider min values and ranges
+  const wSlider = document.getElementById('dimW_val');
+  const hSlider = document.getElementById('dimH_val');
+  if (!state.panel.overrideW) {
+    wSlider.min = minW.toFixed(0);
+    wSlider.max = Math.max(400, minW * 3).toFixed(0);
+    wSlider.value = panW.toFixed(0);
+  }
+  if (!state.panel.overrideH) {
+    hSlider.min = minH.toFixed(0);
+    hSlider.max = Math.max(300, minH * 3).toFixed(0);
+    hSlider.value = panH.toFixed(0);
+  }
+}
+
+function toggleSpacingOverride(on) {
+  state.panel.overrideSpacing = on;
+  const el = document.getElementById('spacingFields');
+  el.style.opacity = on ? '1' : '0.35';
+  el.style.pointerEvents = on ? 'all' : 'none';
+  // When off: reset state to defaults BUT leave slider positions as user set them
+  if (!on) {
+    state.panel.slotGap = DEFAULTS.SLOT_GAP;
+    state.panel.edgeMargin = DEFAULTS.EDGE_MARGIN;
+    state.panel.labelGap = DEFAULTS.LABEL_GAP;
+    state.panel.ledGap = DEFAULTS.LED_GAP;
+  }
+  rebuild();
+}
+
+function toggleDepthOverride(on) {
+  state.panel.overrideDepth = on;
+  const slider = document.getElementById('dimD_val');
+  slider.style.pointerEvents = on ? 'auto' : 'none';
+  slider.style.opacity = on ? '1' : '0.35';
+  // Slider value preserved — only reset state when off
+  if (!on) state.panel.depth = DEFAULTS.DEPTH;
+  rebuild();
+}
+
+function toggleMountOverride(on) {
+  const fields = document.getElementById('mountFields');
+  fields.style.opacity = on ? '1' : '0.4';
+  fields.style.pointerEvents = on ? 'all' : 'none';
+  rebuild();
+}
+
+function toggleMountSettings(on) {
+  const fields = document.getElementById('mountSettingsFields');
+  fields.style.opacity = on ? '1' : '0.35';
+  fields.style.pointerEvents = on ? 'all' : 'none';
+  if (!on) {
+    state.panel.mountHoleDiam = DEFAULTS.MOUNT_HOLE_D;
+    state.panel.mountHoleInset = DEFAULTS.MOUNT_INSET;
+  }
+  rebuild();
+}
+
+
+
+function toggleCornerOverride(on) {
+  state.panel.overrideCorner = on;
+  const el = document.getElementById('cornerFields');
+  el.style.opacity = on ? '1' : '0.35';
+  el.style.pointerEvents = on ? 'all' : 'none';
+  // Slider preserved — only reset state when off
+  if (!on) state.panel.cornerR = DEFAULTS.CORNER_R;
+  rebuild();
+}
+
+// ─────────────────────────────────────────────
+// LAYOUT
+// ─────────────────────────────────────────────
+function setLayout(l) {
+  state.layout = l;
+  document.querySelectorAll('[id^=lay_]').forEach(b => b.classList.remove('active'));
+  document.getElementById('lay_' + l)?.classList.add('active');
+  document.getElementById('st_l').textContent = l;
+  renderGridArranger();
+  rebuild();
+}
+
+// ─────────────────────────────────────────────
+// FREEFORM GRID ARRANGER
+// Grid is stored as a 2D map {row_col: slotId}
+// Users can drag to any cell including expansion cells
+// ─────────────────────────────────────────────
+
+// Grid state: sparse map of "row_col" -> slotId
+// Separate from state.slots ordering for layout purposes
+let gridMap = {}; // { "0_0": slotId, "0_1": slotId2, ... }
+let gridRows = 1;
+let gridCols = 3;
+
+function initGridFromSlots() {
+  gridMap = {};
+  // Place slots left-to-right, top-to-bottom in order
+  state.slots.forEach((slot, i) => {
+    const r = Math.floor(i / Math.max(gridCols, 1));
+    const c = i % Math.max(gridCols, 1);
+    gridMap[`${r}_${c}`] = slot.id;
+  });
+  // Recalc bounds
+  recalcGridBounds();
+}
+
+function recalcGridBounds() {
+  const keys = Object.keys(gridMap);
+  if (!keys.length) { gridRows = 1; gridCols = 1; return; }
+  let maxR = 0, maxC = 0;
+  keys.forEach(k => {
+    const [r, c] = k.split('_').map(Number);
+    maxR = Math.max(maxR, r);
+    maxC = Math.max(maxC, c);
+  });
+  gridRows = maxR + 1;
+  gridCols = maxC + 1;
+}
+
+function renderGridArranger() {
+  const el = document.getElementById('gridArranger');
+  if (!el) return;
+  el.innerHTML = '';
+
+  if (!state.slots.length) {
+    el.innerHTML = '<div style="color:var(--muted2);font-size:10px;text-align:center;padding:24px 0;line-height:1.8">Add slots on the Slots tab</div>';
+    return;
+  }
+
+  // Ensure all slots are placed in grid
+  const placedIds = new Set(Object.values(gridMap));
+  state.slots.forEach(slot => {
+    if (!placedIds.has(slot.id)) {
+      for (let r=0; r<20; r++) for (let c=0; c<20; c++) {
+        const k=`${r}_${c}`;
+        if (!gridMap[k]) { gridMap[k]=slot.id; recalcGridBounds(); return; }
+      }
+    }
+  });
+  Object.keys(gridMap).forEach(k=>{if(!state.slots.find(s=>s.id===gridMap[k]))delete gridMap[k];});
+  recalcGridBounds();
+
+  const dispR = gridRows+1, dispC = gridCols+1;
+  const CELL = 56, GAP = 5;
+
+  // Use a simple CSS grid — no absolute positioning, no coordinate math
+  const grid = document.createElement('div');
+  grid.style.cssText = `display:grid;grid-template-columns:repeat(${dispC},${CELL}px);grid-template-rows:repeat(${dispR},${CELL}px);gap:${GAP}px;`;
+
+  for (let r=0; r<dispR; r++) {
+    for (let c=0; c<dispC; c++) {
+      const key = `${r}_${c}`;
+      const slId = gridMap[key];
+      const slot = slId ? state.slots.find(s=>s.id===slId) : null;
+      const isExp = r>=gridRows || c>=gridCols;
+
+      const cell = document.createElement('div');
+      cell.dataset.key = key;
+      cell.style.cssText = `width:${CELL}px;height:${CELL}px;display:flex;align-items:center;justify-content:center;flex-direction:column;box-sizing:border-box;`;
+
+      if (slot) {
+        const col = TYPE_COL[slot.type]||'#888';
+        cell.style.cssText += `border:1px solid var(--bord);background:var(--surf2);cursor:grab;user-select:none;`;
+        cell.draggable = true;
+        cell.innerHTML = `
+          <div style="width:7px;height:7px;border-radius:50%;background:${col};margin-bottom:3px;flex-shrink:0"></div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text);text-align:center;max-width:${CELL-6}px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px">${slot.label||'—'}</div>
+          <div style="font-size:8px;color:var(--muted);margin-top:1px">${slot.type}</div>`;
+
+        cell.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('fromKey', key);
+          e.dataTransfer.setData('slotId', String(slId));
+          e.dataTransfer.effectAllowed = 'move';
+          setTimeout(() => cell.style.opacity = '0.35', 0);
+        });
+        cell.addEventListener('dragend', () => { cell.style.opacity = '1'; });
+
+      } else if (isExp) {
+        const alpha = (r>=gridRows&&c>=gridCols) ? 0.07 : 0.18;
+        cell.style.cssText += `border:1px dashed rgba(109,179,135,${alpha});background:rgba(109,179,135,${alpha*0.4});`;
+        cell.innerHTML = `<span style="color:rgba(109,179,135,0.5);font-size:18px;line-height:1">+</span>`;
+      } else {
+        cell.style.cssText += `border:1px dashed var(--bord-dk);background:rgba(0,0,0,.06);`;
+        cell.innerHTML = `<span style="font-size:8px;color:var(--muted2);letter-spacing:1px">gap</span>`;
+      }
+
+      // All cells accept drops
+      cell.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        cell.style.outline = '2px solid var(--green)';
+        // Auto-scroll sidebar when dragging near edges
+        const sbar = document.querySelector('.sbar-body[id="tab-arrange"]');
+        if (sbar) {
+          const rect = sbar.getBoundingClientRect();
+          const margin = 40;
+          if (e.clientY - rect.top < margin) sbar.scrollTop -= 8;
+          else if (rect.bottom - e.clientY < margin) sbar.scrollTop += 8;
+          if (e.clientX - rect.left < margin) sbar.scrollLeft -= 8;
+          else if (rect.right - e.clientX < margin) sbar.scrollLeft += 8;
+        }
+      });
+      cell.addEventListener('dragleave', () => { cell.style.outline = ''; });
+      cell.addEventListener('drop', e => {
+        e.preventDefault();
+        cell.style.outline = '';
+        const fromKey = e.dataTransfer.getData('fromKey');
+        const draggedId = parseInt(e.dataTransfer.getData('slotId'));
+        if (!fromKey || isNaN(draggedId) || fromKey === key) return;
+        const existId = gridMap[key];
+        if (existId) {
+          // Swap
+          gridMap[fromKey] = existId;
+          gridMap[key] = draggedId;
+        } else {
+          delete gridMap[fromKey];
+          gridMap[key] = draggedId;
+        }
+        recalcGridBounds();
+        syncSlotsFromGrid();
+        renderSlotList();
+        renderGridArranger();
+        rebuild();
+      });
+
+      grid.appendChild(cell);
+    }
+  }
+
+  el.appendChild(grid);
+  const legend = document.createElement('div');
+  legend.style.cssText = 'margin-top:8px;font-size:9px;color:var(--muted2);line-height:1.7;text-align:center';
+  legend.innerHTML = 'Drag slots into any cell &nbsp;·&nbsp; + cells expand the grid &nbsp;·&nbsp; empty = gap';
+  el.appendChild(legend);
+}
+
+function syncSlotsFromGrid() {
+  const ordered = [];
+  for (let r=0; r<=gridRows+2; r++) for (let c=0; c<=gridCols+2; c++) {
+    const id = gridMap[`${r}_${c}`];
+    if (id) { const s=state.slots.find(x=>x.id===id); if(s&&!ordered.find(x=>x.id===id))ordered.push(s); }
+  }
+  state.slots.forEach(s=>{if(!ordered.find(o=>o.id===s.id))ordered.push(s);});
+  state.slots = ordered;
+}
+
+
+// ─────────────────────────────────────────────
+// SAVE / LOAD
+// ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// FILE EXPLORER SAVE SYSTEM
+// ─────────────────────────────────────────────
+
+function getStore() {
+  try { return JSON.parse(localStorage.getItem('bit_v5') || '{"folders":[],"items":[]}'); }
+  catch { return { folders:[], items:[] }; }
+}
+function setStore(s) { localStorage.setItem('bit_v5', JSON.stringify(s)); }
+
+let feOpenFolders = new Set();
+let _feDragId = null, _feDragFolderId = null;
+
+function getSaved() {
+  const s = getStore();
+  return [...s.items, ...s.folders.flatMap(f => f.items)];
+}
+
+function renderSavedList() { renderFileExplorer(); }
+
+function renderFileExplorer() {
+  const el = document.getElementById('feList');
+  if (!el) return;
+  const s = getStore();
+  let html = '';
+
+  s.items.forEach(d => { html += feDesignRow(d, 0); });
+
+  s.folders.forEach(f => {
+    const open = feOpenFolders.has(f.id);
+    const count = f.items.length;
+    html += `<div class="fe-folder-wrap">
+      <div class="fe-folder-hdr" data-fid="${f.id}"
+        ondragover="event.preventDefault();this.classList.add('fe-drag-over')"
+        ondragleave="this.classList.remove('fe-drag-over')"
+        ondrop="feDropIntoFolder(event,${f.id})">
+        <span class="fe-chevron" onclick="feToggle(${f.id})">${open?'&#9662;':'&#9656;'}</span>
+        <span>📁</span>
+        <span class="fe-folder-name" id="fefd-${f.id}" onclick="feToggle(${f.id})">${f.name}</span>
+        <span class="fe-count">${count}</span>
+        <div class="fe-acts">
+          <button class="ibtn" onclick="event.stopPropagation();feRenameFolder(${f.id})" title="Rename"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="ibtn" onclick="event.stopPropagation();feDlFolder(${f.id})" title="Download all as STL"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+          <button class="ibtn del" onclick="event.stopPropagation();feDeleteFolder(${f.id})" title="Delete folder"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+      </div>
+      ${open ? `<div class="fe-folder-body">${count ? f.items.map(d => feDesignRow(d, f.id)).join('') : '<div class="fe-empty">Empty folder</div>'}</div>` : ''}
+    </div>`;
+  });
+
+  if (!html) html = '<div class="fe-empty" style="padding:20px;text-align:center">No saved designs.<br>Click 💾 Save to start.</div>';
+  el.innerHTML = html;
+}
+
+function feDesignRow(d, folderId) {
+  const slots = d.state?.slots?.length || 0;
+  return `<div class="fe-item" draggable="true"
+    ondragstart="feDragStart(event,${d.id},${folderId})"
+    ondragover="feDragOver(event,this)"
+    ondragleave="feDragLeave(this)"
+    ondrop="feDrop(event,this,${d.id},${folderId})">
+    <span class="fe-grip">⠿</span>
+    <div class="fe-info" onclick="feLoad(${d.id})">
+      <div class="fe-name" id="fen-${d.id}">${d.name}</div>
+      <div class="fe-meta">${d.date} · ${slots} slots</div>
+    </div>
+    <div class="fe-acts">
+      <button class="ibtn" onclick="event.stopPropagation();feRename(${d.id})" title="Rename"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="ibtn" onclick="event.stopPropagation();feDlItem(${d.id})" title="Download STL"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+      <button class="ibtn del" onclick="event.stopPropagation();feDelete(${d.id})" title="Delete"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>`;
+}
+
+function feToggle(id) {
+  feOpenFolders.has(id) ? feOpenFolders.delete(id) : feOpenFolders.add(id);
+  renderFileExplorer();
+}
+
+// ── Drag & drop ──
+function feDragStart(e, id, folderId) {
+  _feDragId = id; _feDragFolderId = folderId;
+  e.dataTransfer.effectAllowed = 'move';
+  // Suppress default ghost image — use element itself styled as ghost
+  const el = e.currentTarget;
+  el.classList.add('dragging');
+  setTimeout(() => el.classList.remove('dragging'), 0);
+  // Create clean drag image
+  const ghost = el.cloneNode(true);
+  ghost.style.cssText = 'position:fixed;top:-200px;left:-200px;width:'+el.offsetWidth+'px;background:var(--surf2);border:1px solid var(--green);opacity:0.9;pointer-events:none';
+  document.body.appendChild(ghost);
+  e.dataTransfer.setDragImage(ghost, 20, 14);
+  setTimeout(() => document.body.removeChild(ghost), 0);
+}
+let _lastDragEl = null, _lastDragPos = null;
+function feDragOver(e, el) {
+  e.preventDefault();
+  const r = el.getBoundingClientRect(), mid = r.top + r.height/2;
+  const pos = e.clientY < mid ? 'fe-top' : 'fe-bottom';
+  if (_lastDragEl === el && _lastDragPos === pos) return; // no change, skip
+  if (_lastDragEl && _lastDragEl !== el) { _lastDragEl.classList.remove('fe-top','fe-bottom'); }
+  el.classList.remove('fe-top','fe-bottom');
+  el.classList.add(pos);
+  _lastDragEl = el; _lastDragPos = pos;
+}
+function feDragLeave(el) {
+  // Only clear if mouse truly left (not just moved to child)
+  el.classList.remove('fe-top','fe-bottom');
+  if (_lastDragEl === el) { _lastDragEl = null; _lastDragPos = null; }
+}
+function feDrop(e, el, targetId, targetFolderId) {
+  e.preventDefault();
+  const before = el.classList.contains('fe-top');
+  el.classList.remove('fe-top','fe-bottom');
+  if (!_feDragId || _feDragId === targetId) return;
+  const s = getStore();
+  let item = null;
+  const ri = s.items.findIndex(d => d.id === _feDragId);
+  if (ri !== -1) item = s.items.splice(ri,1)[0];
+  else s.folders.forEach(f => { const i = f.items.findIndex(d => d.id === _feDragId); if (i !== -1) item = f.items.splice(i,1)[0]; });
+  if (!item) return;
+  if (targetFolderId) {
+    const f = s.folders.find(f => f.id === targetFolderId);
+    if (f) { let ti = f.items.findIndex(d => d.id === targetId); f.items.splice(before ? ti : ti+1, 0, item); }
+  } else {
+    let ti = s.items.findIndex(d => d.id === targetId);
+    s.items.splice(before ? ti : ti+1, 0, item);
+  }
+  setStore(s); renderFileExplorer(); _feDragId = null;
+}
+function feDropIntoFolder(e, folderId) {
+  e.preventDefault();
+  document.querySelectorAll('.fe-folder-hdr').forEach(h => h.classList.remove('fe-drag-over'));
+  if (!_feDragId) return;
+  const s = getStore();
+  let item = null;
+  const ri = s.items.findIndex(d => d.id === _feDragId);
+  if (ri !== -1) item = s.items.splice(ri,1)[0];
+  else s.folders.forEach(f => { const i = f.items.findIndex(d => d.id === _feDragId); if (i !== -1) item = f.items.splice(i,1)[0]; });
+  if (!item) return;
+  const f = s.folders.find(f => f.id === folderId);
+  if (f) { f.items.push(item); feOpenFolders.add(folderId); }
+  setStore(s); renderFileExplorer(); _feDragId = null;
+}
+
+// ── Inline rename ──
+function feRename(id) {
+  const el = document.getElementById('fen-' + id);
+  if (!el) return;
+  const cur = el.textContent;
+  el.innerHTML = `<input class="fe-rename-inp" value="${cur}"
+    onblur="feRenameCommit(${id},this,'item')"
+    onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.dataset.cancel=1;this.blur()}"
+    onclick="event.stopPropagation()">`;
+  el.querySelector('input').select();
+}
+function feRenameFolder(id) {
+  const el = document.getElementById('fefd-' + id);
+  if (!el) return;
+  const cur = el.textContent;
+  el.innerHTML = `<input class="fe-rename-inp" value="${cur}"
+    onblur="feRenameCommit(${id},this,'folder')"
+    onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){this.dataset.cancel=1;this.blur()}"
+    onclick="event.stopPropagation()">`;
+  el.querySelector('input').select();
+}
+function feRenameCommit(id, inp, type) {
+  if (inp.dataset.cancel) { renderFileExplorer(); return; }
+  const name = inp.value.trim();
+  if (!name) { renderFileExplorer(); return; }
+  const s = getStore();
+  if (type === 'folder') {
+    const f = s.folders.find(f => f.id === id); if (f) f.name = name;
+  } else {
+    const d = s.items.find(d => d.id === id);
+    if (d) d.name = name;
+    else s.folders.forEach(f => { const d = f.items.find(d => d.id === id); if (d) d.name = name; });
+  }
+  setStore(s); renderFileExplorer();
+}
+
+// ── Load / delete / download ──
+function feLoad(id) {
+  const d = getSaved().find(d => d.id === id);
+  if (!d) return;
+  Object.assign(state, JSON.parse(JSON.stringify(d.state)));
+  slotId = Math.max(slotId, ...state.slots.map(s => s.id||0), 0);
+  syncUIFromState(); initGridFromSlots(); renderSlotList(); renderGridArranger(); rebuild();
+  showToast('Loaded: ' + d.name);
+}
+function feDelete(id) {
+  const d = getSaved().find(d => d.id === id);
+  if (!d || !confirm(`Delete "${d.name}"?`)) return;
+  const s = getStore();
+  s.items = s.items.filter(d => d.id !== id);
+  s.folders.forEach(f => f.items = f.items.filter(d => d.id !== id));
+  setStore(s); renderFileExplorer();
+}
+function feDeleteFolder(id) {
+  const s = getStore(); const f = s.folders.find(f => f.id === id);
+  if (!f || !confirm(`Delete folder "${f.name}" and its ${f.items.length} design(s)?`)) return;
+  s.folders = s.folders.filter(f => f.id !== id);
+  setStore(s); renderFileExplorer();
+}
+function feDlItem(id) { downloadDesignSTL(id); }
+function feDlFolder(id) {
+  const s = getStore(); const f = s.folders.find(f => f.id === id);
+  if (!f || !f.items.length) { showToast('Folder is empty'); return; }
+  f.items.forEach((d,i) => setTimeout(() => downloadDesignSTL(d.id), i*700));
+  showToast(`Downloading ${f.items.length} files...`);
+}
+
+// ── Save / new folder ──
+function showSaveModal() {
+  document.getElementById('saveModal').classList.add('open');
+  document.getElementById('saveName').value = '';
+  setTimeout(() => document.getElementById('saveName').focus(), 50);
+}
+function saveDesign() {
+  const name = document.getElementById('saveName').value.trim();
+  if (!name) { showToast('Enter a name'); return; }
+  const s = getStore();
+  // Save to first open folder, or root
+  const openFolder = [...feOpenFolders][0];
+  const design = { id:Date.now(), name, date:new Date().toLocaleDateString(), state:JSON.parse(JSON.stringify(state)) };
+  if (openFolder) {
+    const f = s.folders.find(f => f.id === openFolder);
+    if (f) { f.items.push(design); } else { s.items.push(design); }
+  } else { s.items.push(design); }
+  setStore(s); closeModal('saveModal'); showToast('✓ Saved: '+name); renderFileExplorer();
+}
+function feNewFolder() {
+  document.getElementById('folderModal').classList.add('open');
+  document.getElementById('folderNameInp').value = '';
+  setTimeout(() => document.getElementById('folderNameInp').focus(), 50);
+}
+function feNewFolderConfirmActual() {
+  const name = document.getElementById('folderNameInp').value.trim();
+  if (!name) return;
+  const s = getStore();
+  const id = Date.now();
+  s.folders.push({ id, name, items:[] });
+  feOpenFolders.add(id);
+  setStore(s); closeModal('folderModal'); renderFileExplorer();
+}
+
+// ── loadDesign/deleteDesign aliases ──
+function loadDesign(id) { feLoad(id); }
+function deleteDesign(id) { feDelete(id); }
+
+// ── Export / Import .bjm ──
+function exportBJP() {
+  document.getElementById('exportModal').classList.add('open');
+  document.getElementById('exportTree').innerHTML = buildExportTree();
+  document.getElementById('exportFileName').value = 'benjam-designs';
+}
+function buildExportTree() {
+  const s = getStore(); let html = '';
+  s.items.forEach(d => {
+    html += `<label class="fe-check-row"><input type="checkbox" class="exp-item" data-id="${d.id}" checked> ⬡ ${d.name}</label>`;
+  });
+  s.folders.forEach(f => {
+    html += `<div><label class="fe-check-row" style="background:var(--surf2)"><input type="checkbox" class="exp-folder" data-fid="${f.id}" checked
+      onchange="this.closest('div').querySelectorAll('.exp-sub').forEach(c=>c.checked=this.checked)"> 📁 ${f.name}</label>`;
+    f.items.forEach(d => {
+      html += `<label class="fe-check-row" style="padding-left:24px"><input type="checkbox" class="exp-item exp-sub" data-id="${d.id}" data-fid="${f.id}" checked> ⬡ ${d.name}</label>`;
+    });
+    html += `</div>`;
+  });
+  return html || '<div class="fe-empty">No designs saved yet</div>';
+}
+function doExportBJM() {
+  const s = getStore();
+  const ids = new Set([...document.querySelectorAll('.exp-item:checked')].map(c => parseInt(c.dataset.id)));
+  const fids = new Set([...document.querySelectorAll('.exp-folder:checked')].map(c => parseInt(c.dataset.fid)));
+  const out = {
+    items: s.items.filter(d => ids.has(d.id)),
+    folders: s.folders.filter(f => fids.has(f.id)).map(f => ({...f, items: f.items.filter(d => ids.has(d.id))})),
+  };
+  const fname = (document.getElementById('exportFileName').value.trim() || 'benjam-designs') + '.bjm';
+  const blob = new Blob([JSON.stringify({version:1,store:out,exported:new Date().toISOString()},null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+  closeModal('exportModal');
+  const count = out.items.length + out.folders.reduce((a,f) => a+f.items.length, 0);
+  showToast(`Exported ${count} designs as ${fname}`);
+}
+function importBJP(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const inc = data.store || data;
+      if (!inc.folders || !inc.items) throw new Error('Invalid');
+      const cur = getStore(); const off = Date.now();
+      inc.items.forEach((d,i) => { d.id = off+i; cur.items.push(d); });
+      inc.folders.forEach((f,fi) => {
+        f.id = off+1000+fi;
+        f.items.forEach((d,i) => { d.id = off+2000+fi*100+i; });
+        cur.folders.push(f);
+      });
+      setStore(cur); renderFileExplorer();
+      const count = inc.items.length + inc.folders.reduce((a,f)=>a+f.items.length,0);
+      showToast(`Loaded "${file.name}" — ${count} design${count!==1?'s':''} imported`);
+    } catch { showToast('Import failed: invalid file'); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── Download STL modal ──
+function buildDlTree() {
+  const s = getStore();
+  const dims = getPanelDims();
+  let html = `<label class="fe-check-row" style="border-bottom:1px solid var(--bord-dk)"><input type="checkbox" id="dlCurrent" checked onchange="document.getElementById('dlNameSection').style.display=this.checked&&!document.querySelectorAll('.dl-item:checked').length?'block':'none'"> Current panel (unsaved)</label>`;
+  s.items.forEach(d => {
+    html += `<label class="fe-check-row"><input type="checkbox" class="dl-item" data-id="${d.id}"> ⬡ ${d.name} <span style="margin-left:auto;font-size:8px;color:var(--muted2)">${d.date}</span></label>`;
+  });
+  s.folders.forEach(f => {
+    html += `<div><label class="fe-check-row" style="background:var(--surf2)"><input type="checkbox" class="dl-folder"
+      onchange="this.closest('div').querySelectorAll('.dl-item').forEach(c=>c.checked=this.checked)"> 📁 ${f.name}</label>`;
+    f.items.forEach(d => {
+      html += `<label class="fe-check-row" style="padding-left:24px"><input type="checkbox" class="dl-item" data-id="${d.id}"> ⬡ ${d.name}</label>`;
+    });
+    html += `</div>`;
+  });
+  return html;
+}
+function showDownloadModal() {
+  const dims = getPanelDims();
+  const sug = `benjam-panel-${state.slots.length}slot-${dims.w.toFixed(0)}x${dims.h.toFixed(0)}mm`;
+  const inp = document.getElementById('dlFileName');
+  inp.value = sug;
+  document.getElementById('dlPreview').textContent = sug + '.stl';
+  inp.oninput = () => {
+    const v = inp.value.trim().replace(/[^a-zA-Z0-9_.-]/g,'') || 'panel';
+    document.getElementById('dlPreview').textContent = v + '.stl';
+  };
+  document.getElementById('dlTree').innerHTML = buildDlTree();
+  document.getElementById('dlNameSection').style.display = 'block';
+  document.getElementById('downloadModal').classList.add('open');
+}
+function downloadSTL(customName) {
+  const btn = document.querySelector('.nbtn.grn');
+  btn.textContent = '⏳ Building...';
+  setTimeout(() => {
+    try {
+      const tris = [];
+      // Export panel geometry + STL label geometry (pixel boxes)
+      const exportGroups = [panelGroup, stlLabelGroup];
+      exportGroups.forEach(group => group.traverse(child => {
+        if (!child.isMesh) return;
+        const geo = child.geometry.clone();
+        const rm = new THREE.Matrix4().makeRotationFromEuler(child.rotation);
+        const pm = new THREE.Matrix4().makeTranslation(child.position.x, child.position.y, child.position.z);
+        geo.applyMatrix4(rm); geo.applyMatrix4(pm);
+        const pos = geo.attributes.position;
+        const idx = geo.index;
+        const push = (a, b, c) => {
+          const va = new THREE.Vector3().fromBufferAttribute(pos, a);
+          const vb = new THREE.Vector3().fromBufferAttribute(pos, b);
+          const vc = new THREE.Vector3().fromBufferAttribute(pos, c);
+          const n = new THREE.Vector3().crossVectors(new THREE.Vector3().subVectors(vb, va), new THREE.Vector3().subVectors(vc, va)).normalize();
+          tris.push({ n, a: va, b: vb, c: vc });
+        };
+        if (idx) { for (let i = 0; i < idx.array.length; i += 3) push(idx.array[i], idx.array[i + 1], idx.array[i + 2]); }
+        else { for (let i = 0; i < pos.count; i += 3) push(i, i + 1, i + 2); }
+      }));
+      const buf = new ArrayBuffer(80 + 4 + tris.length * 50);
+      const dv = new DataView(buf);
+      const hdr = 'Benjam In Transit Panel Studio';
+      for (let i = 0; i < 80; i++) dv.setUint8(i, i < hdr.length ? hdr.charCodeAt(i) : 0);
+      dv.setUint32(80, tris.length, true);
+      let off = 84;
+      tris.forEach(({ n, a, b, c }) => {
+        [n.x, n.y, n.z, a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z].forEach(v => { dv.setFloat32(off, v, true); off += 4; });
+        dv.setUint16(off, 0, true); off += 2;
+      });
+      const dims = getPanelDims();
+      const fname = customName || `benjam-panel-${state.slots.length}slot-${dims.w.toFixed(0)}x${dims.h.toFixed(0)}mm.stl`;
+      const blob = new Blob([buf], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = fname; a.click();
+      URL.revokeObjectURL(url);
+      showToast('✓ STL downloaded!');
+    } catch (e) { console.error(e); showToast('Error generating STL'); }
+    btn.innerHTML = '⬇ Download STL';
+  }, 50);
+}
+
+// ─────────────────────────────────────────────
+// RESIZE & RENDER LOOP
+// ─────────────────────────────────────────────
+
+function executeDownload() {
+  const cur = document.getElementById('dlCurrent')?.checked;
+  const items = [...document.querySelectorAll('.dl-item:checked')].map(c => parseInt(c.dataset.id));
+  if (!cur && !items.length) { showToast('Select at least one'); return; }
+  closeModal('downloadModal');
+  let delay = 0;
+  if (cur) {
+    const name = (document.getElementById('dlFileName').value.trim().replace(/[^a-zA-Z0-9_.-]/g,'')||'panel')+'.stl';
+    setTimeout(() => downloadSTL(name), delay); delay += 700;
+  }
+  items.forEach(id => { setTimeout(() => downloadDesignSTL(id), delay); delay += 700; });
+  if ((cur?1:0)+items.length > 1) showToast(`Downloading ${(cur?1:0)+items.length} files...`);
+}
+function downloadDesignSTL(id) {
+  const d = getSaved().find(d => d.id === id); if (!d) return;
+  const saved = JSON.parse(JSON.stringify(state));
+  Object.assign(state, JSON.parse(JSON.stringify(d.state)));
+  slotId = Math.max(slotId, ...state.slots.map(s=>s.id||0), 0);
+  rebuild();
+  setTimeout(() => {
+    downloadSTL(d.name.replace(/[^a-zA-Z0-9_-]/g,'_')+'.stl');
+    setTimeout(() => { Object.assign(state, saved); slotId = Math.max(slotId, ...state.slots.map(s=>s.id||0), 0); rebuild(); }, 200);
+  }, 100);
+}
+
+// ── Render load list (for load modal if used) ──
+function renderLoadList() {
+  const el = document.getElementById('loadList'); if (!el) return;
+  const d = getSaved();
+  el.innerHTML = d.map(d => `<div style="padding:6px 8px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;border-bottom:1px solid var(--bord-dk)" onclick="feLoad(${d.id});closeModal('loadModal')">${d.name}</div>`).join('') || '<div style="padding:10px;color:var(--muted)">No saved designs</div>';
+}
+function showLoadModal() { renderLoadList(); document.getElementById('loadModal').classList.add('open'); }
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function switchTab(tab, el) {
+  ['slots', 'arrange', 'panel', 'style', 'saves'].forEach(t => {
+    const el2 = document.getElementById('tab-' + t);
+    if (el2) el2.style.display = t === tab ? (t === 'saves' ? 'flex' : 'block') : 'none';
+  });
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else document.querySelector(`[onclick*="switchTab('${tab}"]`)?.classList.add('active');
+  if (tab === 'saves') renderSavedList();
+  if (tab === 'arrange') renderGridArranger();
+}
+
+// ─────────────────────────────────────────────
+// ORDER PRINT / STL EXPORT
+// ─────────────────────────────────────────────
+function orderPrint() { window.open('index.html#print', '_blank'); }
+
+let _dlMode = 'current';
+function setDlMode(mode, btn) {
+  _dlMode = mode;
+  ['current','saved','folder'].forEach(m => {
+    document.getElementById('dl_'+m+'_ui').style.display = m===mode ? 'block' : 'none';
+    document.getElementById('dl_'+m).classList.toggle('active', m===mode);
+  });
+}
+
+// ─────────────────────────────────────────────
+// RESIZE & RENDER LOOP
+// ─────────────────────────────────────────────
+function resizeRenderer() {
+  const wrap = document.getElementById('canvasWrap');
+  const w = Math.max(1, wrap.clientWidth - 40);
+  const h = Math.max(1, wrap.clientHeight - 40);
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', resizeRenderer);
+resizeRenderer();
+setView('iso');
+
+// Wait for Google Fonts to load before first render so canvas text is correct
+// Lighting presets
+const LIGHT_PRESETS = [
+  { name: 'Studio Neutral', desc: 'Balanced, clean shadows',
+    amb:0.25, keyI:1.1, keyPos:[-80,-120,100], fillI:0.4, rimI:0.12, bg:155 },
+  { name: 'High Contrast', desc: 'Deep shadows, defined holes',
+    amb:0.1, keyI:1.5, keyPos:[-60,100,80], fillI:0.2, rimI:0.08, bg:175 },
+  { name: 'Soft Studio', desc: 'Gentle, diffuse lighting',
+    amb:0.45, keyI:0.8, keyPos:[-80,120,100], fillI:0.5, rimI:0.15, bg:215 },
+  { name: 'Top Light', desc: 'Overhead, strong depth cues',
+    amb:0.15, keyI:1.3, keyPos:[0,200,60], fillI:0.3, rimI:0.1, bg:195 },
+  { name: 'Front Lit', desc: 'Direct frontal, minimal shadow',
+    amb:0.35, keyI:1.0, keyPos:[0,40,200], fillI:0.35, rimI:0.06, bg:200 },
+  { name: 'Dark Workshop', desc: 'Dark bg, dramatic',
+    amb:0.1, keyI:1.2, keyPos:[-80,120,100], fillI:0.25, rimI:0.08, bg:75 },
+];
+
+let currentPreset = 0;
+
+function applyLightPreset(idx) {
+  const p = LIGHT_PRESETS[idx];
+  currentPreset = idx;
+  ambient.intensity = p.amb;
+  keyL.intensity = p.keyI;
+  keyL.position.set(...p.keyPos);
+  fillL.intensity = p.fillI;
+  rimL.intensity = p.rimI;
+  const v = p.bg/255;
+  scene.background.setRGB(v,v,v);
+  document.querySelectorAll('[id^="lp_"]').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+function initLightPresets() {
+  const cards = document.getElementById('lightPresetCards');
+  if (!cards) return;
+  LIGHT_PRESETS.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.id = 'lp_' + i;
+    btn.className = 'ctool';
+    btn.style.cssText = 'width:100%;text-align:left;padding:5px 8px;font-size:9px;margin-bottom:2px;display:block';
+    btn.textContent = p.name;
+    btn.onclick = () => { applyLightPreset(i); toggleLightingPanel(); };
+    cards.appendChild(btn);
+  });
+  applyLightPreset(0);
+}
+
+let _lpOpen = false;
+function toggleLightingPanel() {
+  _lpOpen = !_lpOpen;
+  document.getElementById('lightingPanel').style.display = _lpOpen ? 'block' : 'none';
+}
+
+document.addEventListener('click', e => {
+  if (!_lpOpen) return;
+  const p = document.getElementById('lightingPanel');
+  const b = document.getElementById('lightingBtn');
+  if (p && b && !p.contains(e.target) && !b.contains(e.target)) {
+    _lpOpen = false; p.style.display = 'none';
+  }
+});
+
+document.fonts.ready.then(() => {
+  // Start with one button by default
+  addSlot('button');
+  const firstSlot = state.slots[0];
+  if (firstSlot) {
+    firstSlot.label = 'Lights';
+    renderSlotList();
+  }
+  initLightPresets();
+  preloadCurrentFont();
+  updateBIUButtons();
+  clearTextureCache();
+  rebuild();
+  animate();
+});
+</script>
+</body>
+</html>
