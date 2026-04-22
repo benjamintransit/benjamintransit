@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║  BENJAM IN TRANSIT — index.html                                  ║
+║  Lives at: benjamintransit.com                                   ║
+║  Configurator at: benjamintransit.com/configurator               ║
+║                                                                  ║
+║  ── 3D HERO SETUP ──────────────────────────────────────────     ║
+║                                                                  ║
+║  STEP 1 — Convert your STL to GLB (free, 30 seconds):           ║
+║    a. Go to https://products.aspose.app/3d/conversion/stl-to-glb ║
+║       OR search "STL to GLB converter" — many free options       ║
+║    b. Upload your STL file                                       ║
+║    c. Download the converted .glb file                           ║
+║    d. Rename it to: panel.glb                                    ║
+║                                                                  ║
+║  STEP 2 — Upload panel.glb to Netlify:                           ║
+║    Put panel.glb in the same folder as this index.html           ║
+║    in your Netlify repo / deploy folder                          ║
+║                                                                  ║
+║  STEP 3 — Done. The 3D viewer will load automatically.           ║
+║                                                                  ║
+║  OPTIONAL — To change the model colour/material:                 ║
+║    Use https://www.cgtrader.com or Blender to set a dark         ║
+║    material before exporting to GLB. Or leave it as-is           ║
+║    and the viewer will show it in a neutral grey which           ║
+║    still looks great against the dark background.                ║
+║                                                                  ║
+║  OPTIONAL — Multiple panels:                                     ║
+║    Convert each panel to its own .glb file, name them            ║
+║    panel1.glb, panel2.glb etc., then find "EDIT: 3D MODEL"       ║
+║    below to add them to a carousel.                              ║
+║                                                                  ║
+║  QUICK FIND — Ctrl+F to jump:                                    ║
+║  "EDIT: PAGE TITLE"    "EDIT: NAV LOGO"                          ║
+║  "EDIT: SOCIAL LINKS"  "EDIT: HERO"                              ║
+║  "EDIT: 3D MODEL"      "EDIT: CONFIGURATOR"                      ║
+║  "EDIT: HOW IT WORKS"  "EDIT: STL PRODUCT"                       ║
+║  "EDIT: FAQ"           "EDIT: FOOTER"                            ║
+╚══════════════════════════════════════════════════════════════════╝
+-->
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- EDIT: PAGE TITLE -->
+<title>Benjam In Transit</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<!--
+  model-viewer — Google's 3D web component.
+  This one script tag is all that's needed. Do not remove it.
+  It loads from a CDN so no install required.
+-->
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+<script src="https://payhip.com/payhip.js" type="text/javascript"></script>
+
+<style>
+/* ── TOKENS — match configurator ── */
+:root{
+  --bg:#2e2e2e;--surf:#383838;--surf2:#424242;--surf3:#1e1e1e;--surf4:#323232;
+  --bord:#505050;--bord-dk:#3a3a3a;
+  --green:#6cbf9c;--green2:#52a882;
+  --brown:#5a2e10;--brown2:#7a3e18;
+  --black:#111;--lgrey:#f0f0f0;--mgrey:#888;--dgrey:#2a2a2a;
+  --text:#e8e8e8;--muted:#909090;--muted2:#666;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--surf3);color:var(--text);font-family:'Barlow',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden}
+
+/* ── NAV (scaled 1.5×, fixed to top) ── */
+.nav-outer{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:69px; /* 46px × 1.5 */
+  overflow:hidden;
+  background:var(--black);
+  border-bottom:1px solid var(--bord-dk);
+}
+nav{
+  height:46px;background:var(--black);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;
+  transform:scale(1.5);transform-origin:top left;
+  width:66.667%;
+}
+.nav-spacer{height:69px}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;color:var(--lgrey);text-decoration:none;white-space:nowrap}
+.nav-logo span{color:var(--green)}
+.nav-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.nbtn{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:5px 10px;border:1px solid var(--bord);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.nbtn:hover{border-color:var(--green);color:var(--green)}
+.nbtn.grn{background:var(--green);color:var(--black);border-color:var(--green);font-weight:700}
+.nbtn.grn:hover{background:var(--green2)}
+.nbtn.ico{border-color:transparent;padding:5px 6px}
+.nbtn.ico:hover{border-color:var(--green)}
+.nbtn.ico svg{width:13px;height:13px;display:block;flex-shrink:0}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:90vh;display:flex;align-items:center;overflow:hidden;padding:80px 40px;background:var(--surf3)}
+.hero-bg{position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 80% at 70% 50%, rgba(108,191,156,0.07) 0%, transparent 70%),
+    repeating-linear-gradient(90deg,transparent,transparent 79px,rgba(255,255,255,0.02) 79px,rgba(255,255,255,0.02) 80px),
+    repeating-linear-gradient(0deg,transparent,transparent 79px,rgba(255,255,255,0.02) 79px,rgba(255,255,255,0.02) 80px);
+}
+.hero-layout{position:relative;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-content{max-width:560px}
+.hero-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green);border:1px solid var(--green);padding:5px 14px;margin-bottom:28px;opacity:0;animation:fadeUp .6s .1s forwards}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,8vw,110px);line-height:.92;letter-spacing:4px;color:var(--lgrey);opacity:0;animation:fadeUp .7s .2s forwards}
+.hero h1 .accent{color:var(--green)}
+.hero-sub{margin-top:28px;font-size:16px;color:var(--muted);max-width:440px;opacity:0;animation:fadeUp .7s .35s forwards}
+.hero-actions{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap;opacity:0;animation:fadeUp .7s .5s forwards}
+.hero-stats{display:flex;gap:40px;margin-top:48px;opacity:0;animation:fadeUp .7s .65s forwards}
+.stat-item{text-align:left}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--green);line-height:1}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+
+/* ── 3D VIEWER ── */
+.hero-visual{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;
+  opacity:0;animation:fadeUp .7s .4s forwards;
+}
+
+/* model-viewer component styling */
+model-viewer{
+  width:100%;
+  height:420px;
+  background:transparent;
+  --poster-color:transparent;
+  border:1px solid var(--bord-dk);
+  border-radius:2px;
+}
+
+/* loading placeholder shown before GLB loads */
+.mv-placeholder{
+  width:100%;height:420px;
+  border:1px solid var(--bord-dk);
+  background:var(--surf);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+}
+.mv-placeholder-icon{
+  display:flex;gap:12px;align-items:center;opacity:.4;
+}
+.mv-placeholder-text{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted2);
+  text-align:center;line-height:2;
+}
+
+/* carousel dots (for multiple panels) */
+.mv-dots{display:flex;gap:8px;justify-content:center}
+.mv-dot{width:6px;height:6px;border-radius:50%;background:var(--bord);border:none;cursor:pointer;transition:background .2s;padding:0}
+.mv-dot.active{background:var(--green)}
+
+/* hint label */
+.mv-hint{
+  font-family:'Share Tech Mono',monospace;font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted2);
+  display:flex;align-items:center;gap:6px;
+}
+.mv-hint::before{content:'↻';font-size:12px}
+
+/* ── TICKER ── */
+.ticker{background:var(--brown);overflow:hidden;padding:10px 0;white-space:nowrap}
+.ticker-inner{display:inline-block;animation:ticker 24s linear infinite}
+.ticker span{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:4px;color:var(--lgrey);margin:0 40px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── SHARED ── */
+section{padding:80px 40px}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,56px);letter-spacing:3px;color:var(--lgrey);line-height:1;margin-bottom:48px}
+.divider{border:none;border-top:1px solid var(--bord-dk);margin:0}
+
+/* ── BUTTONS ── */
+.btn-green{background:var(--green);color:var(--black);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;border:none;cursor:pointer;font-weight:700;text-decoration:none;display:inline-block;transition:background .2s,transform .1s}
+.btn-green:hover{background:var(--green2);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--lgrey);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:12px 28px;border:1px solid var(--bord);cursor:pointer;text-decoration:none;display:inline-block;transition:border-color .2s,color .2s}
+.btn-ghost:hover{border-color:var(--lgrey);color:var(--lgrey)}
+
+/* ── SOCIAL STRIP ── */
+.social-strip{background:var(--surf);border-top:1px solid var(--bord-dk);border-bottom:1px solid var(--bord-dk);padding:18px 40px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.social-strip-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.social-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:7px 12px;border:1px solid var(--bord-dk);background:transparent;color:var(--muted);text-decoration:none;transition:all .2s}
+.social-btn:hover{border-color:var(--green);color:var(--green)}
+.social-btn svg{width:13px;height:13px;flex-shrink:0}
+
+/* ── CONFIGURATOR SPLIT ── */
+.config-split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.feature-card{background:var(--surf);border:1px solid var(--bord-dk);padding:20px;transition:border-color .2s}
+.feature-card:hover{border-color:var(--green)}
+.feature-icon{width:36px;height:36px;margin-bottom:12px;display:flex;align-items:center;justify-content:center}
+.feature-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--lgrey);margin-bottom:4px}
+.feature-desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── HOW IT WORKS ── */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2px}
+.how-card{background:var(--surf);border:1px solid var(--bord-dk);padding:32px 24px}
+.how-num{font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--bord);line-height:1;margin-bottom:16px}
+.how-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--green);margin-bottom:10px}
+.how-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── STL SHOP ── */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px}
+.stl-card{background:var(--surf);border:1px solid var(--bord-dk);overflow:hidden;transition:border-color .2s,transform .2s;display:flex;flex-direction:column;cursor:pointer;text-decoration:none;color:inherit}
+.stl-card:hover{border-color:var(--green);transform:translateY(-3px)}
+.stl-thumb{height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.stl-thumb img{width:100%;height:100%;object-fit:cover}
+.stl-thumb::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 8px,rgba(255,255,255,0.012) 8px,rgba(255,255,255,0.012) 9px);z-index:1}
+.stl-thumb-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;z-index:2}
+.thumb-c1{background:linear-gradient(145deg,#1e3028,#0e1e16)}
+.thumb-c2{background:linear-gradient(145deg,#2a1e10,#1a1008)}
+.thumb-c3{background:linear-gradient(145deg,#1a2030,#0e1420)}
+.thumb-c4{background:linear-gradient(145deg,#201a30,#120e20)}
+.stl-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;background:rgba(108,191,156,0.1);color:var(--green);border:1px solid var(--green)}
+.stl-slot-preview{display:flex;gap:8px;align-items:center;margin-top:4px}
+.stl-body{padding:18px;flex:1;display:flex;flex-direction:column}
+.stl-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--lgrey);margin-bottom:6px}
+.stl-desc{font-size:12px;color:var(--muted);line-height:1.5;flex:1;margin-bottom:18px}
+.stl-footer{display:flex;align-items:center;justify-content:space-between}
+.stl-price{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green);letter-spacing:1px}
+.stl-price .currency{font-size:14px;color:var(--muted);vertical-align:super;font-family:'Barlow',sans-serif;font-weight:300}
+.stl-cta{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:9px 16px;background:var(--brown);color:var(--lgrey);border:none;transition:background .2s}
+.stl-card:hover .stl-cta{background:var(--brown2)}
+
+/* ── PRODUCT MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--surf);border:1px solid var(--bord);max-width:780px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--bord);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 10px;cursor:pointer;z-index:10}
+.modal-close:hover{border-color:var(--green);color:var(--green)}
+.modal-layout{display:grid;grid-template-columns:1fr 1fr;min-height:400px}
+.modal-img{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:40px 32px;border-right:1px solid var(--bord-dk);background:var(--surf3)}
+.modal-info{padding:40px 32px;display:flex;flex-direction:column}
+.modal-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;background:rgba(108,191,156,0.1);color:var(--green);border:1px solid var(--green);display:inline-block;margin-bottom:16px}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;color:var(--lgrey);line-height:1;margin-bottom:12px}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;flex:1}
+.modal-specs{margin-bottom:24px}
+.modal-spec{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bord-dk);font-size:12px}
+.modal-spec-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.modal-spec-val{color:var(--text);font-size:12px}
+.modal-price-row{display:flex;align-items:center;gap:16px;margin-top:auto}
+.modal-price{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--green);letter-spacing:1px;line-height:1}
+.modal-price .currency{font-size:20px;color:var(--muted);vertical-align:super;font-family:'Barlow',sans-serif;font-weight:300}
+
+/* model-viewer inside modal */
+.modal-3d{width:100%;height:100%;min-height:300px}
+.modal-3d model-viewer{width:100%;height:300px;background:transparent;--poster-color:transparent}
+
+a.payhip-buy-btn,a.payhip-buy-btn:visited{display:inline-block!important;font-family:'Share Tech Mono',monospace!important;font-size:10px!important;letter-spacing:2px!important;text-transform:uppercase!important;padding:12px 24px!important;background:var(--brown)!important;color:var(--lgrey)!important;font-weight:700!important;text-decoration:none!important;border:none!important;border-radius:0!important;cursor:pointer!important;transition:background .2s!important}
+a.payhip-buy-btn:hover{background:var(--brown2)!important;color:var(--lgrey)!important}
+
+/* ── CTA BANNER ── */
+.cta-banner{background:var(--surf);border:1px solid var(--bord-dk);border-left:4px solid var(--green);padding:48px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap}
+
+/* ── FAQ ── */
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;max-width:900px}
+.faq-card{background:var(--surf);border:1px solid var(--bord-dk);padding:24px 28px}
+.faq-q{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--green);margin-bottom:8px}
+.faq-a{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{background:var(--black);border-top:1px solid var(--bord-dk);padding:48px 40px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:12px;color:var(--lgrey)}
+.footer-brand span{color:var(--green)}
+.footer-tagline{font-size:13px;color:var(--muted);line-height:1.6;max-width:260px;margin-bottom:20px}
+.footer-socials{display:flex;gap:6px;flex-wrap:wrap}
+.footer-col h4{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:16px}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:8px}
+.footer-col a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-col a:hover{color:var(--lgrey)}
+.footer-bottom{background:var(--black);border-top:1px solid var(--bord-dk);padding:16px 40px;display:flex;justify-content:space-between;align-items:center}
+.footer-bottom p{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.ph-note{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted)}
+.ph-dot{width:6px;height:6px;background:var(--green);border-radius:50%}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .hero-layout{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .config-split{grid-template-columns:1fr}
+  .faq-grid{grid-template-columns:1fr}
+  .modal-layout{grid-template-columns:1fr}
+  .modal-img{border-right:none;border-bottom:1px solid var(--bord-dk)}
+  footer{grid-template-columns:1fr;padding:40px 20px}
+}
+@media(max-width:600px){
+  .nav-outer{height:46px}
+  nav{transform:none;width:100%}
+  .nav-spacer{height:46px}
+  .hero{padding:60px 20px;min-height:auto}
+  .hero-stats{flex-wrap:wrap;gap:24px}
+  section{padding:60px 20px}
+  .cta-banner{padding:28px 20px}
+  .footer-bottom{flex-direction:column;gap:8px;padding:16px 20px;text-align:center}
+  .social-strip{padding:16px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     NAV
+     ═══════════════════════════════════════════════════ -->
+<div class="nav-outer">
+  <nav>
+    <!-- EDIT: NAV LOGO — word in <span> is green -->
+    <a href="/" class="nav-logo">BENJAM IN <span>TRANSIT</span></a>
+    <div class="nav-right">
+      <a href="#how"  class="nbtn">How It Works</a>
+      <a href="#shop" class="nbtn">STL Shop</a>
+      <a href="#faq"  class="nbtn">FAQ</a>
+
+      <!-- social icons injected by JS from SOCIAL_LINKS below -->
+      <span id="navSocials"></span>
+      <a href="/configurator" class="nbtn grn">⚙ Configurator</a>
+    </div>
+  </nav>
+</div>
+<div class="nav-spacer"></div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-layout">
+
+    <!-- LEFT: text -->
+    <div class="hero-content">
+      <!-- EDIT: HERO -->
+      <div class="hero-badge">// 100% Free — Design Your Own Panels</div>
+      <h1>YOUR PROJECT,<br>YOUR <span class="accent">PANELS.</span></h1>
+      <p class="hero-sub">Design custom button and switch panels for your van build, boat or DIY project using our free browser configurator. No account, no software, no cost — just design and download.</p>
+      <!-- ─────────────────── -->
+      <div class="hero-actions">
+        <a href="/configurator" class="btn-green">⚙ Open Configurator — Free</a>
+        <a href="#shop" class="btn-ghost">Browse STL Files</a>
+      </div>
+      <!-- EDIT: HERO STATS -->
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">FREE</div><div class="stat-label">Configurator</div></div>
+        <div class="stat-item"><div class="stat-num">STL</div><div class="stat-label">Instant Download</div></div>
+        <div class="stat-item"><div class="stat-num">UK</div><div class="stat-label">Based</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: 3D viewer -->
+    <div class="hero-visual">
+
+      <!--
+      ╔═════════════════════════════════════════════════════════════╗
+      ║  EDIT: 3D MODEL                                             ║
+      ║                                                             ║
+      ║  To load your real panel:                                   ║
+      ║  1. Convert your STL → GLB (see top of file for how)       ║
+      ║  2. Name the file: panel.glb                                ║
+      ║  3. Upload panel.glb to Netlify in the same folder          ║
+      ║     as this index.html                                      ║
+      ║  4. The viewer will load it automatically                   ║
+      ║                                                             ║
+      ║  To show MULTIPLE panels (carousel):                        ║
+      ║  • Name your files: panel1.glb, panel2.glb, panel3.glb     ║
+      ║  • Find the PANELS array in the <script> below             ║
+      ║  • Add each filename to the array                           ║
+      ║                                                             ║
+      ║  To change the lighting colour:                             ║
+      ║  • Edit the exposure and shadow-intensity attributes        ║
+      ║  • Or change environment-image to a different HDRI          ║
+      ║                                                             ║
+      ║  model-viewer docs: modelviewer.dev                         ║
+      ╚═════════════════════════════════════════════════════════════╝
+      -->
+
+      <!-- model-viewer — this is the actual 3D component -->
+      <model-viewer
+        id="heroViewer"
+        src="Panel1.glb"
+        alt="3D panel preview"
+        auto-rotate
+        auto-rotate-delay="0"
+        rotation-per-second="30deg"
+        camera-controls
+        touch-action="pan-y"
+        shadow-intensity="1"
+        shadow-softness="0.8"
+        exposure="0.8"
+        environment-image="neutral"
+        orientation="0deg 90deg 0deg"
+        style="
+          --progress-bar-color: var(--green);
+          --progress-bar-height: 2px;
+        "
+      >
+        <!-- shown while the GLB is loading -->
+        <div slot="poster" class="mv-placeholder">
+          <div class="mv-placeholder-icon">
+            <svg width="28" height="28" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#ff8800" stroke-width="1.5"/><circle cx="11" cy="11" r="6.5" fill="#ff8800" fill-opacity="0.18" stroke="#ff8800" stroke-width="1.5"/></svg>
+            <svg width="28" height="28" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#6cbf9c" stroke-width="1.5"/><circle cx="11" cy="11" r="6.5" fill="#6cbf9c" fill-opacity="0.18" stroke="#6cbf9c" stroke-width="1.5"/><rect x="1" y="9" width="3" height="4" rx="0.5" fill="#6cbf9c"/><rect x="18" y="9" width="3" height="4" rx="0.5" fill="#6cbf9c"/></svg>
+            <svg width="22" height="28" viewBox="0 0 22 22" fill="none"><rect x="5.5" y="1" width="11" height="20" rx="1.5" stroke="#e05c5c" stroke-width="1.5"/><rect x="8" y="3.5" width="6" height="15" rx="1" fill="#e05c5c" fill-opacity="0.18" stroke="#e05c5c" stroke-width="1.5"/></svg>
+          </div>
+          <div class="mv-placeholder-text">
+            Loading 3D preview…<br>
+            <span style="color:var(--muted2)">Upload panel.glb to activate</span>
+          </div>
+        </div>
+      </model-viewer>
+
+      <!-- carousel dots (shown when multiple panels are loaded) -->
+      <div class="mv-dots" id="mvDots" style="display:none"></div>
+
+      <!-- drag hint -->
+      <div class="mv-hint">Drag to rotate · Pinch to zoom</div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>FREE STL DOWNLOAD</span><span>LIVE 3D PREVIEW</span><span>CUSTOM TEXT LABELS</span>
+    <span>BUTTON PANELS</span><span>SWITCH PANELS</span><span>VAN CONVERSION</span>
+    <span>NO ACCOUNT NEEDED</span><span>INSTANT DIGITAL DOWNLOAD</span>
+    <span>FREE STL DOWNLOAD</span><span>LIVE 3D PREVIEW</span><span>CUSTOM TEXT LABELS</span>
+    <span>BUTTON PANELS</span><span>SWITCH PANELS</span><span>VAN CONVERSION</span>
+    <span>NO ACCOUNT NEEDED</span><span>INSTANT DIGITAL DOWNLOAD</span>
+  </div>
+</div>
+
+
+<!-- SOCIAL STRIP — EDIT: SOCIAL LINKS — see SOCIAL_LINKS in the <script> at the bottom -->
+<div class="social-strip">
+  <span class="social-strip-label">Follow the build →</span>
+  <span id="stripSocials"></span>
+</div>
+
+
+<!-- CONFIGURATOR SECTION -->
+<section id="configurator" style="background:var(--surf3)">
+  <div class="section-label">// Free Tool</div>
+  <div class="section-title">THE CONFIGURATOR</div>
+  <div class="config-split">
+    <div>
+      <!-- EDIT: CONFIGURATOR paragraphs -->
+      <p style="font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:20px;">Use the free browser-based configurator to design your panel from scratch. Choose how many slots you need, whether each one is a button, switch, or rocker, type your own labels, and watch the 3D model update live.</p>
+      <p style="font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:32px;">When you're happy, hit download — you get a ready-to-slice STL file instantly. No account, no email, no payment. Completely free.</p>
+      <a href="/configurator" class="btn-green">⚙ Open Configurator — Free</a>
+    </div>
+    <!-- EDIT: CONFIGURATOR feature cards -->
+    <div class="feature-grid">
+      <div class="feature-card"><div class="feature-icon"><svg width="34" height="34" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#ff8800" stroke-width="1.5"/><circle cx="11" cy="11" r="6.5" fill="#ff8800" fill-opacity="0.18" stroke="#ff8800" stroke-width="1.5"/></svg></div><div class="feature-title">Buttons</div><div class="feature-desc">Momentary push buttons — lights, fan, USB</div></div>
+      <div class="feature-card"><div class="feature-icon"><svg width="34" height="34" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#6cbf9c" stroke-width="1.5"/><circle cx="11" cy="11" r="6.5" fill="#6cbf9c" fill-opacity="0.18" stroke="#6cbf9c" stroke-width="1.5"/><rect x="1" y="9" width="3" height="4" rx="0.5" fill="#6cbf9c"/><rect x="18" y="9" width="3" height="4" rx="0.5" fill="#6cbf9c"/><line x1="11" y1="6" x2="11" y2="9.5" stroke="#6cbf9c" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="15" r="1.8" stroke="#6cbf9c" stroke-width="1.4"/></svg></div><div class="feature-title">Switches</div><div class="feature-desc">Toggle switches for permanent circuits</div></div>
+      <div class="feature-card"><div class="feature-icon"><svg width="22" height="34" viewBox="0 0 22 22" fill="none"><rect x="5.5" y="1" width="11" height="20" rx="1.5" stroke="#e05c5c" stroke-width="1.5"/><rect x="8" y="3.5" width="6" height="15" rx="1" fill="#e05c5c" fill-opacity="0.18" stroke="#e05c5c" stroke-width="1.5"/><rect x="5.5" y="9" width="2.5" height="4" rx="0.5" fill="#e05c5c"/><rect x="14" y="9" width="2.5" height="4" rx="0.5" fill="#e05c5c"/></svg></div><div class="feature-title">Rockers</div><div class="feature-desc">Rocker switches for a clean panel look</div></div>
+      <div class="feature-card"><div class="feature-icon"><svg width="34" height="34" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="10" stroke="#50c8c8" stroke-width="1.5"/><circle cx="11" cy="11" r="6.5" fill="#50c8c8" fill-opacity="0.18" stroke="#50c8c8" stroke-width="1.5"/><rect x="14.6" y="3.9" width="4.5" height="2.8" rx="0.5" fill="#50c8c8" transform="rotate(45 16.85 5.25)"/><rect x="2.9" y="3.9" width="4.5" height="2.8" rx="0.5" fill="#50c8c8" transform="rotate(-45 5.15 5.25)"/><rect x="2.9" y="15.3" width="4.5" height="2.8" rx="0.5" fill="#50c8c8" transform="rotate(45 5.15 16.75)"/><rect x="14.6" y="15.3" width="4.5" height="2.8" rx="0.5" fill="#50c8c8" transform="rotate(-45 16.85 16.75)"/><path d="M 8.9 9.8 A 2.4 2.4 0 1 0 13.1 9.8" stroke="#50c8c8" stroke-width="1.4" stroke-linecap="round" fill="none"/><line x1="11" y1="8" x2="11" y2="11" stroke="#50c8c8" stroke-width="1.4" stroke-linecap="round"/></svg></div><div class="feature-title">Custom Slots</div><div class="feature-desc">Define your own hole sizes and shapes</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--surf3)">
+  <div class="section-label">// Process</div>
+  <div class="section-title">HOW IT WORKS</div>
+  <div class="how-grid">
+    <!-- EDIT: HOW IT WORKS STEP 1 -->
+    <div class="how-card"><div class="how-num">01</div><div class="how-title">Open the Configurator</div><div class="how-desc">Go to the free configurator. No account needed, no software to install — runs entirely in your browser.</div></div>
+    <!-- EDIT: HOW IT WORKS STEP 2 -->
+    <div class="how-card"><div class="how-num">02</div><div class="how-title">Design Your Panel</div><div class="how-desc">Add slots, choose types (button/switch/rocker), type your labels. The 3D preview updates live as you go.</div></div>
+    <!-- EDIT: HOW IT WORKS STEP 3 -->
+    <div class="how-card"><div class="how-num">03</div><div class="how-title">Download Free STL</div><div class="how-desc">Hit download — your custom STL is generated instantly. Open it in any slicer and print it yourself. 100% free.</div></div>
+    <!-- EDIT: HOW IT WORKS STEP 4 -->
+    <div class="how-card"><div class="how-num">04</div><div class="how-title">Or — Buy Ready-Made</div><div class="how-desc">Want a pre-designed panel? Browse the STL shop below — instant digital download, print it straight away.</div></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STL SHOP -->
+<section id="shop" style="background:var(--surf3)">
+  <div class="section-label">// Digital Downloads</div>
+  <div class="section-title">STL SHOP</div>
+  <!-- EDIT: shop intro text -->
+  <p style="font-size:14px;color:var(--muted);max-width:560px;margin-bottom:48px;line-height:1.8;">Pre-designed panel STL files — instant download via Payhip. Print them yourself and install in minutes.</p>
+
+  <div class="shop-grid" id="shopGrid">
+    <!-- populated by JS from the PRODUCTS object below -->
+  </div>
+</section>
+
+
+<!-- PRODUCT MODAL -->
+<div class="modal-bg" id="productModal" onclick="closeModalBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕ Close</button>
+    <div class="modal-layout">
+      <div class="modal-img" id="modalImg"></div>
+      <div class="modal-info">
+        <span class="modal-badge">STL File — Instant Download</span>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-desc"  id="modalDesc"></div>
+        <div class="modal-specs" id="modalSpecs"></div>
+        <div class="modal-price-row">
+          <div class="modal-price" id="modalPrice"></div>
+          <div id="modalBtn"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--surf3)">
+  <div class="section-label">// Questions</div>
+  <div class="section-title">FAQ</div>
+  <div class="faq-grid">
+    <!-- EDIT: FAQ QUESTION 1 -->
+    <div class="faq-card"><div class="faq-q">Is the configurator really free?</div><div class="faq-a">Yes, completely. Design your panel, download the STL, print it yourself — no payment, no account, no catch.</div></div>
+    <!-- EDIT: FAQ QUESTION 2 -->
+    <div class="faq-card"><div class="faq-q">What are the STL shop files for?</div><div class="faq-a">Pre-designed panels ready to slice and print. If you want full control over slots and labels, use the free configurator instead.</div></div>
+    <!-- EDIT: FAQ QUESTION 3 -->
+    <div class="faq-card"><div class="faq-q">How do I get my file after buying?</div><div class="faq-a">Payhip delivers the STL to your email instantly after checkout. No waiting, no account required to download.</div></div>
+    <!-- EDIT: FAQ QUESTION 4 -->
+    <div class="faq-card"><div class="faq-q">What slicer settings should I use?</div><div class="faq-a">0.2mm layer height, 3 walls, 20% infill works well for most panels. A full print guide is included with each paid file.</div></div>
+    <!-- EDIT: FAQ QUESTION 5 -->
+    <div class="faq-card"><div class="faq-q">What size are the button holes?</div><div class="faq-a">Standard 16mm momentary buttons and 12mm toggle switches. All holes sized to fit common off-the-shelf hardware.</div></div>
+    <!-- EDIT: FAQ QUESTION 6 -->
+    <div class="faq-card"><div class="faq-q">Can I customise a paid STL?</div><div class="faq-a">Paid files are fixed STLs. For a fully custom layout and labels, use the free configurator — it's built exactly for that.</div></div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CTA BANNER -->
+<section style="background:var(--surf3)">
+  <div class="cta-banner">
+    <div>
+      <div class="section-label" style="margin-bottom:8px">// Free Tool</div>
+      <!-- EDIT: CTA text -->
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,4vw,48px);letter-spacing:3px;line-height:1;margin-bottom:12px;color:var(--lgrey)">BUILD YOUR PANEL<br><span style="color:var(--green)">IN THE BROWSER</span></h2>
+      <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.7">Choose your slot types, type your labels, see a live 3D preview — then download the STL instantly. No account needed. Completely free.</p>
+    </div>
+    <a href="/configurator" class="btn-green" style="white-space:nowrap;font-size:12px;padding:14px 36px">⚙ Open Configurator</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <!-- EDIT: FOOTER brand — "TRANSIT" (in span) is green -->
+    <div class="footer-brand">BENJAM IN <span>TRANSIT</span></div>
+    <!-- EDIT: FOOTER tagline -->
+    <p class="footer-tagline">Free panel configurator for van builders, plus ready-made STL files. UK-based, built for real builds.</p>
+    <!-- EDIT: SOCIAL LINKS — footer socials injected by JS from SOCIAL_LINKS below -->
+    <div class="footer-socials" id="footerSocials"></div>
+  </div>
+  <!-- EDIT: FOOTER links -->
+  <div class="footer-col">
+    <h4>Tools</h4>
+    <ul>
+      <li><a href="/configurator">Panel Configurator</a></li>
+      <li><a href="#shop">STL Shop</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Info</h4>
+    <ul>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">YouTube</a></li>
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">TikTok</a></li>
+      <li><a href="#">Facebook</a></li>
+    </ul>
+  </div>
+</footer>
+
+<!-- EDIT: FOOTER copyright -->
+<div class="footer-bottom">
+  <p>© 2026 Benjam In Transit — All rights reserved</p>
+  <div class="ph-note"><div class="ph-dot"></div>Secure checkout &amp; file delivery by Payhip</div>
+</div>
+
+
+<script>
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  EDIT: SOCIAL LINKS — update these URLs once and they populate  ║
+║  everywhere: nav icons, the social strip, and the footer.       ║
+║                                                                  ║
+║  Set a URL to '' (empty string) to hide that platform.          ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+const SOCIAL_LINKS = {
+  youtube:   'https://www.youtube.com/@BenjamInTransit',               // ← paste your YouTube channel URL
+  instagram: 'https://www.instagram.com/benjamintransit/',               // ← paste your Instagram URL
+  tiktok:    'https://www.tiktok.com/@benjamintransituk',               // ← paste your TikTok URL
+  facebook:  'https://www.facebook.com/share/1Fw571RmAx',               // ← paste your Facebook URL
+  email:     'benjamintransituk@gmail.com',  // ← paste your email address
+};
+
+/* ── SVG icons (keyed to match SOCIAL_LINKS) ── */
+const SOCIAL_SVGS = {
+  youtube:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+  tiktok:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>`,
+  facebook:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  email:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>`,
+};
+
+/* Label shown in strip + footer (not in nav — nav is icon-only) */
+const SOCIAL_LABELS = {
+  youtube: 'YouTube', instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', email: 'Email',
+};
+
+/* Build the href for each platform (email gets mailto:) */
+function socialHref(key) {
+  const val = SOCIAL_LINKS[key];
+  if (!val) return null;
+  return key === 'email' ? 'mailto:' + val : val;
+}
+
+/* Render into all three locations */
+(function renderSocials() {
+  const navEl    = document.getElementById('navSocials');
+  const stripEl  = document.getElementById('stripSocials');
+  const footerEl = document.getElementById('footerSocials');
+
+  Object.keys(SOCIAL_LINKS).forEach(key => {
+    const href = socialHref(key);
+    if (!href) return;                         // empty = hidden
+    const isEmail   = key === 'email';
+    const targetRel = isEmail ? '' : 'target="_blank" rel="noopener"';
+    const svg       = SOCIAL_SVGS[key];
+    const label     = SOCIAL_LABELS[key];
+
+    /* NAV — icon only */
+    if (navEl) {
+      navEl.insertAdjacentHTML('beforeend',
+        `<a href="${href}" class="nbtn ico" title="${label}" ${targetRel}>${svg}</a>`);
+    }
+
+    /* SOCIAL STRIP — icon + label */
+    if (stripEl) {
+      stripEl.insertAdjacentHTML('beforeend',
+        `<a href="${href}" class="social-btn" ${targetRel}>${svg}${label}</a>`);
+    }
+
+    /* FOOTER — icon + label */
+    if (footerEl) {
+      footerEl.insertAdjacentHTML('beforeend',
+        `<a href="${href}" class="social-btn" ${targetRel}>${svg}${label}</a>`);
+    }
+  });
+})();
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  EDIT: 3D MODEL CAROUSEL                                         ║
+║                                                                  ║
+║  Add your GLB filenames to this array.                           ║
+║  If you only have one panel, just leave one entry.               ║
+║  If you have multiple, the dots below the viewer let             ║
+║  visitors switch between them.                                   ║
+║                                                                  ║
+║  Example with multiple panels:                                   ║
+║  const PANELS = ['Panel1.glb', 'Panel2.glb', 'Panel3.glb'];     ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+const PANELS = ['panel.glb'];   // ← ADD YOUR GLB FILENAMES HERE
+
+/* ── Hero viewer: set first panel as src ── */
+const viewerEl = document.getElementById('heroViewer');
+viewerEl.setAttribute('src', PANELS[0]);
+
+/* build carousel dots if more than one panel */
+const dotsEl   = document.getElementById('mvDots');
+let   activePanel = 0;
+
+if (PANELS.length > 1) {
+  dotsEl.style.display = 'flex';
+  PANELS.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'mv-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => switchPanel(i));
+    dotsEl.appendChild(dot);
+  });
+}
+
+function switchPanel(i) {
+  activePanel = i;
+  viewerEl.setAttribute('src', PANELS[i]);
+  dotsEl.querySelectorAll('.mv-dot').forEach((d, j) => {
+    d.classList.toggle('active', j === i);
+  });
+}
+
+/* auto-cycle panels every 6 seconds if more than one */
+if (PANELS.length > 1) {
+  setInterval(() => switchPanel((activePanel + 1) % PANELS.length), 6000);
+}
+
+
+/*
+╔══════════════════════════════════════════════════════════════════╗
+║  EDIT: STL PRODUCT DATA                                          ║
+║                                                                  ║
+║  Edit ALL product info here in ONE place.                        ║
+║  The shop cards on the page AND the popup modal both read        ║
+║  from this — you never need to edit the HTML cards directly.     ║
+║                                                                  ║
+║  glb:       filename of your GLB (no spaces in filename!)        ║
+║  img:       filename of a photo instead (optional)               ║
+║  payhipUrl: your full Payhip product URL                         ║
+╚══════════════════════════════════════════════════════════════════╝
+*/
+const PRODUCTS = {
+
+  p1: {
+    name:     'AuxBeam Control Panel Enclosure',
+    price:    '5',
+    desc:     'Enclosure for the AuxBeam Control Panel',
+    specs: [
+      ['Print Size', '~123 × 80 × 20mm'],
+      ['Files',      '2'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/1PTFv',
+    glb: 'modelAuxBeam.glb',
+  },
+
+  p2: {
+    name:     'Diesel Heater Control Panel Enclosure',
+    price:    '5',
+    desc:     'Enclosure for Chinese Diesel Heater Control Panel',
+    specs: [
+      ['Print Size', '~123 × 79 × 22mm'],
+      ['Files',      '2'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/B0wX3',
+    glb: 'modeldieselheater.glb',
+  },
+
+  p3: {
+    name:     'Netgear Nighthawk M1 Holder',
+    price:    '5',
+    desc:     'Netgear Nighthawk M1 Mobile Router Holder',
+    specs: [
+      ['Print Size', '~110 × 108 × 26mm'],
+      ['Files',      '1'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/rKIbl',
+    glb: 'modelNetgear.glb',
+  },
+
+  p4: {
+    name:     'Heat Exchanger Radiator Connectors',
+    price:    '20',
+    desc:     'Radiator Connectors for Custom Heat Exchanger Setup',
+    specs: [
+      ['Print Size', '~151 × 118 × 30mm'],
+      ['Files',      '3'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/SmldM',
+    glb: 'modelheatexchanger.glb',
+  },
+
+  p5: {
+    name:     'Kettle Holder',
+    price:    '8',
+    desc:     'Kettle Holder for the 800ml Travel Kettle from Amazon',
+    specs: [
+      ['Print Size', '~143 × 116 × 63mm'],
+      ['Files',      '1'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/RpaB5',
+    glb: 'modelkettle.glb',
+  },
+
+  p6: {
+    name:     'CUSTOM Ford Transit Cab Storage Switch Panel',
+    price:    '25',
+    desc:     'Custom Designed for you, Ford Transit Cab Storage Switch Panel',
+    specs: [
+      ['Print Size', '~187 × 57 × 4mm'],
+      ['Files',      '4'],
+      ['Includes',   'STL + Print Guide txt'],
+      ['Delivery',   'Instant download via Payhip'],
+    ],
+    payhipUrl: 'https://payhip.com/b/lMHvS',
+    glb: 'modelpanel.glb',
+  },
+
+};
+
+/* ── Build shop cards from PRODUCTS ── */
+const thumbColours = ['thumb-c1','thumb-c2','thumb-c3','thumb-c4'];
+const shopGrid = document.getElementById('shopGrid');
+
+Object.entries(PRODUCTS).forEach(([id, p], idx) => {
+  const colClass = thumbColours[idx % thumbColours.length];
+
+  let thumbContent;
+  if (p.glb) {
+    thumbContent = `
+      <model-viewer
+        src="${p.glb}"
+        alt="${p.name}"
+        auto-rotate
+        auto-rotate-delay="0"
+        rotation-per-second="20deg"
+        camera-controls
+        touch-action="pan-y"
+        shadow-intensity="0.8"
+        exposure="0.85"
+        environment-image="neutral"
+        style="width:100%;height:180px;background:#d8d8d8;--poster-color:#d8d8d8;--progress-bar-color:var(--green);--progress-bar-height:2px">
+      </model-viewer>`;
+  } else if (p.img) {
+    thumbContent = `<img src="${p.img}" alt="${p.name}" style="width:100%;height:180px;object-fit:cover">`;
+  } else {
+    thumbContent = `
+      <div class="stl-thumb-inner">
+        <span class="stl-badge">STL File</span>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:8px">3D MODEL</div>
+      </div>`;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'stl-card';
+  card.setAttribute('onclick', `openProduct('${id}')`);
+  card.innerHTML = `
+    <div class="stl-thumb ${colClass}" style="padding:0;overflow:hidden">${thumbContent}</div>
+    <div class="stl-body">
+      <div class="stl-name">${p.name}</div>
+      <div class="stl-desc">${p.desc}</div>
+      <div class="stl-footer">
+        <div class="stl-price"><span class="currency">£</span>${p.price}</div>
+        <div class="stl-cta">View &amp; Buy →</div>
+      </div>
+    </div>`;
+  shopGrid.appendChild(card);
+});
+
+
+/* ── Modal logic ── */
+function openProduct(id) {
+  const p = PRODUCTS[id];
+  if (!p) return;
+
+  const imgEl = document.getElementById('modalImg');
+
+  if (p.glb) {
+    /* show a 3D viewer for this specific product */
+    imgEl.innerHTML = `
+      <div class="modal-3d">
+        <model-viewer
+          src="${p.glb}"
+          alt="${p.name}"
+          auto-rotate
+          auto-rotate-delay="500"
+          rotation-per-second="25deg"
+          camera-controls
+          shadow-intensity="1"
+          exposure="0.8"
+          environment-image="neutral"
+          style="--progress-bar-color:var(--green);--progress-bar-height:2px;background:#d8d8d8;--poster-color:#d8d8d8;width:100%;height:300px">
+        </model-viewer>
+      </div>`;
+  } else if (p.img) {
+    imgEl.innerHTML = `<img src="${p.img}" alt="${p.name}" style="width:100%;object-fit:cover">`;
+  } else {
+    /* fall back to the slot icon preview from the card */
+    const card = document.querySelector(`[onclick="openProduct('${id}')"] .stl-thumb-inner`);
+    imgEl.innerHTML = card ? card.innerHTML : '';
+    imgEl.style.minHeight = '200px';
+  }
+
+  document.getElementById('modalTitle').textContent = p.name;
+  document.getElementById('modalDesc').textContent  = p.desc;
+  document.getElementById('modalPrice').innerHTML   = `<span class="currency">£</span>${p.price}`;
+
+  document.getElementById('modalSpecs').innerHTML = p.specs.map(([label, val]) =>
+    `<div class="modal-spec">
+       <span class="modal-spec-label">${label}</span>
+       <span class="modal-spec-val">${val}</span>
+     </div>`
+  ).join('');
+
+  const btn = document.getElementById('modalBtn');
+  btn.innerHTML = (p.payhipUrl && p.payhipUrl !== '#')
+    ? `<a href="${p.payhipUrl}" class="payhip-buy-btn" data-theme="none">Buy STL — £${p.price}</a>`
+    : `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);border:1px dashed var(--bord);padding:12px 20px;display:inline-block">Coming Soon</span>`;
+
+  document.getElementById('productModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('productModal').classList.remove('open');
+  document.body.style.overflow = '';
+  /* kill any model-viewer inside the modal to stop it loading */
+  document.getElementById('modalImg').innerHTML = '';
+}
+
+function closeModalBg(e) {
+  if (e.target === document.getElementById('productModal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+</body>
+</html>
